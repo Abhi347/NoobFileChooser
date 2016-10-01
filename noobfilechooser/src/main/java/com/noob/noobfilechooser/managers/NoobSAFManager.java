@@ -65,11 +65,9 @@ public class NoobSAFManager {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static NoobFile buildTreeFile(Activity activity, Uri uri) {
+    public static NoobFile buildTreeFile(Activity activity, Uri uri) throws SecurityException{
         ContentResolver contentResolver = activity.getContentResolver();
         Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri,
-                DocumentsContract.getTreeDocumentId(uri));
-        Uri childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(uri,
                 DocumentsContract.getTreeDocumentId(uri));
 
         Cursor docCursor = contentResolver.query(docUri, new String[]{

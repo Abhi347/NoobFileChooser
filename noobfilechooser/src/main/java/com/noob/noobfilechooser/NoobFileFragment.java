@@ -129,8 +129,17 @@ public class NoobFileFragment extends Fragment {
             }
         });
         if (mParent == null) {
+            buildAndLoad();
+        }
+    }
+
+    public void buildAndLoad(){
+        try {
             NoobFile _file = NoobSAFManager.buildTreeFile(getActivity(), NoobPrefsManager.getInstance().getSDCardUri());
             loadParent(_file);
+        }catch (SecurityException ex){
+            ex.printStackTrace();
+            NoobSAFManager.takeCardUriPermission(getActivity());
         }
     }
 

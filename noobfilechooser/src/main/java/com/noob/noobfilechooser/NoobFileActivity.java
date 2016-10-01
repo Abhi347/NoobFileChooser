@@ -21,7 +21,6 @@ public class NoobFileActivity extends AppCompatActivity {
         NoobPrefsManager.getInstance().init(this);
 
 
-
         if (NoobPermissionManager.takeRunTimePermissions(this)) {
             Uri cardUri = NoobPrefsManager.getInstance().getSDCardUri();
             if (cardUri == null) {
@@ -49,10 +48,15 @@ public class NoobFileActivity extends AppCompatActivity {
     }
 
     protected void showFileFragment() {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frag_container, getNoobFileFragment())
-                .commit();
+        try {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.frag_container, getNoobFileFragment())
+                    .commit();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            getNoobFileFragment().buildAndLoad();
+        }
     }
 
     protected NoobFileFragment getNoobFileFragment() {
