@@ -1,5 +1,7 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group='com.github.Abhi347'
 
 android {
     compileSdkVersion 24
