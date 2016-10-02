@@ -129,6 +129,13 @@ public class NoobFile {
         return getType().startsWith("video/");
     }
 
+    public DocumentFile getParent(){
+        if (!isTreeDoc() ){
+            return getDocumentFile().getParentFile();
+        }
+        return null;
+    }
+
     public boolean delete() {
         return getDocumentFile() != null && getDocumentFile().delete();
     }

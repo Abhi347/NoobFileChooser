@@ -1,6 +1,7 @@
 package com.noob.noobfilechooser.managers;
 
 import com.noob.noobfilechooser.listeners.OnNoobFileSelected;
+import com.noob.noobfilechooser.models.NoobFile;
 import com.noob.noobfilechooser.utility.NoobConfig;
 
 /**
@@ -24,6 +25,7 @@ public class NoobManager {
 
     private OnNoobFileSelected mNoobFileSelectedListener;
     private NoobConfig mConfig;
+    private NoobFile mCurrentFile;
 
     public OnNoobFileSelected getNoobFileSelectedListener() {
         return mNoobFileSelectedListener;
@@ -33,6 +35,7 @@ public class NoobManager {
         mNoobFileSelectedListener = noobFileSelectedListenerParam;
     }
 
+    //region Accessors
     public NoobConfig getConfig() {
         if(mConfig==null){
             mConfig = new NoobConfig();
@@ -43,4 +46,13 @@ public class NoobManager {
     public void setConfig(NoobConfig configParam) {
         mConfig = configParam;
     }
+
+    public NoobFile getCurrentFile() {
+        return mCurrentFile;
+    }
+
+    public void setCurrentFile(NoobFile currentFileParam) {
+        mCurrentFile = currentFileParam;
+    }
+    //endregion
 }

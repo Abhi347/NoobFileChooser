@@ -1,6 +1,7 @@
 package com.noob.noobfilechooser;
 
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -35,13 +36,13 @@ public class NoobFileFragment extends Fragment {
     private GridLayoutManager mLayoutManager;
     NoobFileAdapter mNoobFileAdapter;
     private TextView mTitleTextView;
-    ImageButton mSelectionDoneButton,mSelectionCancelButton;
+    ImageButton mSelectionDoneButton, mSelectionCancelButton;
 
-    private NoobFile mParent;
     boolean mMultiSelectionMode = false;
 
     List<NoobFile> mSelectionFiles = new ArrayList<>();
     List<View> mSelectionViews = new ArrayList<>();
+
     public NoobFileFragment() {
         // Required empty public constructor
     }
@@ -92,11 +93,11 @@ public class NoobFileFragment extends Fragment {
         mNoobFileAdapter.setListener(new OnRecyclerViewItemClick<NoobFile>() {
             @Override
             public void onClick(NoobFile model, View view) {
-                if(mMultiSelectionMode){
-                    selectFile(model,view);
-                }else {
+                if (mMultiSelectionMode) {
+                    selectFile(model, view);
+                } else {
                     if (model.isDirectory())
-                        loadParent(model);
+                        loadCurrentFile(model);
                     else {
                         if (NoobManager.getInstance().getNoobFileSelectedListener() != null) {
                             NoobManager.getInstance().getNoobFileSelectedListener().onSingleFileSelection(model);
@@ -108,10 +109,10 @@ public class NoobFileFragment extends Fragment {
 
             @Override
             public void onLongClick(NoobFile model, View view) {
-                if(!mMultiSelectionMode){
+                if (!mMultiSelectionMode) {
                     turnOnMultiSelectMode(true);
                 }
-                selectFile(model,view);
+                selectFile(model, view);
             }
         });
         mSelectionCancelButton.setOnClickListener(new View.OnClickListener() {
@@ -129,28 +130,30 @@ public class NoobFileFragment extends Fragment {
                 }
             }
         });
-        if (mParent == null) {
-            buildAndLoad();
+        if (NoobManager.getInstance().getCurrentFile() == null) {
+            buildAndLoad(getActivity());
+        } else {
+            loadCurrentFile(NoobManager.getInstance().getCurrentFile());
         }
     }
 
-    public void buildAndLoad(){
+    public void buildAndLoad(Activity activity) {
         try {
-            NoobFile _file = NoobSAFManager.buildTreeFile(getActivity(), NoobPrefsManager.getInstance().getSDCardUri());
-            loadParent(_file);
-        }catch (SecurityException ex){
+            NoobFile _file = NoobSAFManager.buildTreeFile(activity, NoobPrefsManager.getInstance().getSDCardUri());
+            loadCurrentFile(_file);
+        } catch (SecurityException ex) {
             ex.printStackTrace();
-            NoobSAFManager.takeCardUriPermission(getActivity());
+            NoobSAFManager.takeCardUriPermission(activity);
         }
     }
 
-    void selectFile(NoobFile file, View view){
-        if(file.isSelected()){
+    void selectFile(NoobFile file, View view) {
+        if (file.isSelected()) {
             file.setSelected(false);
             mSelectionFiles.remove(file);
             mSelectionViews.remove(view);
             view.setBackgroundColor(Color.TRANSPARENT);
-        }else{
+        } else {
             file.setSelected(true);
             mSelectionFiles.add(file);
             mSelectionViews.add(view);
@@ -158,14 +161,14 @@ public class NoobFileFragment extends Fragment {
         }
     }
 
-    void turnOnMultiSelectMode(boolean flag){
-        if(flag){
+    void turnOnMultiSelectMode(boolean flag) {
+        if (flag) {
             mMultiSelectionMode = true;
             mSelectionDoneButton.setVisibility(View.VISIBLE);
             mSelectionCancelButton.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             mMultiSelectionMode = false;
-            for (View view :mSelectionViews) {
+            for (View view : mSelectionViews) {
                 view.setBackgroundColor(Color.TRANSPARENT);
             }
             mSelectionFiles.clear();
@@ -175,44 +178,36 @@ public class NoobFileFragment extends Fragment {
         }
     }
 
-    void loadParent(NoobFile parentParam) {
-        mParent = parentParam;
-        mTitleTextView.setText(parentParam.getName());
+    void loadCurrentFile(NoobFile fileParam) {
+        NoobManager.getInstance().setCurrentFile(fileParam);
+        if (mTitleTextView != null)
+            mTitleTextView.setText(fileParam.getName());
         /*if (parentParam.isTreeDoc())
             mNoobFileAdapter.setItems(parentParam, NoobSAFManager.buildChildFiles(getActivity(), parentParam.getUri()));
         else*/
-        if (parentParam.isDirectory()) {
-            DocumentFile[] _files = parentParam.getDocumentFile().listFiles();
-            List<NoobFile> noobFiles = new ArrayList<>();
-            for (DocumentFile docFile : _files) {
-                noobFiles.add(new NoobFile(docFile));
+        if (mNoobFileAdapter!=null && fileParam.isDirectory()) {
+            DocumentFile[] _children = fileParam.getDocumentFile().listFiles();
+            List<NoobFile> noobChildFiles = new ArrayList<>();
+            for (DocumentFile docFile : _children) {
+                noobChildFiles.add(new NoobFile(docFile));
             }
-            mNoobFileAdapter.setItems(parentParam, noobFiles);
+            mNoobFileAdapter.setItems(fileParam, noobChildFiles);
         }
     }
 
     public boolean onBackPressed() {
-        if(mMultiSelectionMode){
+        if (mMultiSelectionMode) {
             turnOnMultiSelectMode(false);
             return true;
         }
-        if (mParent != null && !mParent.isTreeDoc() && mParent.getDocumentFile().getParentFile()!=null) {
-            loadParent(new NoobFile(mParent.getDocumentFile().getParentFile()));
-            return true;
+        NoobFile _currentFile = NoobManager.getInstance().getCurrentFile();
+        if (_currentFile != null) {
+            DocumentFile _parentFile = _currentFile.getParent();
+            if (_parentFile != null) {
+                loadCurrentFile(new NoobFile(_parentFile));
+                return true;
+            }
         }
         return false;
     }
-
-
-
-    /*List<NoobFile> createDummy(int count){
-        List<NoobFile> items = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            NoobFile item = new NoobFile();
-            item.setName("Test "+i);
-            items.add(item);
-        }
-        return items;
-    }*/
-
 }

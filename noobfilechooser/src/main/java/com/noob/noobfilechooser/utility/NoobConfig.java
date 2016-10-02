@@ -31,57 +31,63 @@ public class NoobConfig {
         return folderDrawableResource;
     }
 
-    public void setFolderDrawableResource(int folderDrawableResourceParam) {
+    public NoobConfig setFolderDrawableResource(int folderDrawableResourceParam) {
         folderDrawableResource = folderDrawableResourceParam;
+        return this;
     }
 
     public int getFileDrawableResource() {
         return fileDrawableResource;
     }
 
-    public void setFileDrawableResource(int fileDrawableResourceParam) {
+    public NoobConfig setFileDrawableResource(int fileDrawableResourceParam) {
         fileDrawableResource = fileDrawableResourceParam;
+        return this;
     }
 
     public int getImageFileDrawableResource() {
         return imageFileDrawableResource;
     }
 
-    public void setImageFileDrawableResource(int imageFileDrawableResourceParam) {
+    public NoobConfig setImageFileDrawableResource(int imageFileDrawableResourceParam) {
         imageFileDrawableResource = imageFileDrawableResourceParam;
+        return this;
     }
 
     public int getAudioFileDrawableResource() {
         return audioFileDrawableResource;
     }
 
-    public void setAudioFileDrawableResource(int audioFileDrawableResourceParam) {
+    public NoobConfig setAudioFileDrawableResource(int audioFileDrawableResourceParam) {
         audioFileDrawableResource = audioFileDrawableResourceParam;
+        return this;
     }
 
     public int getVideoFileDrawableResource() {
         return videoFileDrawableResource;
     }
 
-    public void setVideoFileDrawableResource(int videoFileDrawableResourceParam) {
+    public NoobConfig setVideoFileDrawableResource(int videoFileDrawableResourceParam) {
         videoFileDrawableResource = videoFileDrawableResourceParam;
+        return this;
     }
 
     public int getFileGridLayoutItemResource() {
         return fileGridLayoutItemResource;
     }
 
-    public void setFileGridLayoutItemResource(int fileGridLayoutItemResourceParam) {
+    public NoobConfig setFileGridLayoutItemResource(int fileGridLayoutItemResourceParam) {
         fileGridLayoutItemResource = fileGridLayoutItemResourceParam;
+        return this;
     }
 
     public int getFileGridLayoutResource() {
         return fileGridLayoutResource;
     }
 
-    public void setFileGridLayoutResource(int fileGridLayoutResourceParam) {
+    public NoobConfig setFileGridLayoutResource(int fileGridLayoutResourceParam) {
         fileGridLayoutResource = fileGridLayoutResourceParam;
+        return this;
     }
-
     //endregion
 }
