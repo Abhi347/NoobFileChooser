@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
-import com.noob.noobfilechooser.listeners.OnNoobFileSelected;
-
 /**
  * Created by abhi on 27/09/16.
  */
@@ -29,7 +27,7 @@ public class NoobPrefsManager {
 
     private Uri mSDCardUri;
     private SharedPreferences mPreferences;
-    private OnNoobFileSelected mNoobFileSelectedListener;
+
 
     public void init(Activity context){
         mPreferences = context.getSharedPreferences(PREFS_FILE,Context.MODE_PRIVATE);
@@ -50,13 +48,5 @@ public class NoobPrefsManager {
             mSDCardUri = Uri.parse(cardUriStr);
         }
         return mSDCardUri;
-    }
-
-    public OnNoobFileSelected getNoobFileSelectedListener() {
-        return mNoobFileSelectedListener;
-    }
-
-    public void setNoobFileSelectedListener(OnNoobFileSelected noobFileSelectedListenerParam) {
-        mNoobFileSelectedListener = noobFileSelectedListenerParam;
     }
 }

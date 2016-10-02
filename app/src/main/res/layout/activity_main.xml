@@ -4,41 +4,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
     tools:context="noob.com.noobfilechooser.MainActivity">
 
     <Button
-        android:onClick="onChooseFileClick"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="onChooseFileClick"
         android:text="Choose File/Folder"/>
     <Button
-        android:onClick="onDeleteFileClick"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="onDeleteFileClick"
         android:text="Delete File"/>
     <Button
-        android:onClick="onRenameFileClick"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="onRenameFileClick"
         android:text="Rename File"/>
     <TextView
         android:id="@+id/file_name_text"
-        android:text="file name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="file name"/>
     <TextView
         android:id="@+id/file_type_text"
-        android:text="file type"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="file type"/>
     <TextView
         android:id="@+id/file_uri_text"
-        android:text="file URI"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="file URI"/>
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:contentDescription="Place to Preview Image"/>
 </LinearLayout>

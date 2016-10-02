@@ -12,6 +12,8 @@ import android.provider.DocumentsContract;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
+import com.noob.noobfilechooser.models.NoobFile;
+
 import java.util.ArrayList;
 import java.util.List;
 
