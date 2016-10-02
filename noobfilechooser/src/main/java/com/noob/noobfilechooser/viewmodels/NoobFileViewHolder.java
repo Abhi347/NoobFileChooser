@@ -1,12 +1,13 @@
-package com.noob.noobfilechooser;
+package com.noob.noobfilechooser.viewmodels;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.noob.noobfilechooser.R;
 import com.noob.noobfilechooser.listeners.OnRecyclerViewItemClick;
-import com.noob.noobfilechooser.managers.NoobFile;
+import com.noob.noobfilechooser.models.NoobFile;
 
 /**
  * Created by abhi on 23/09/16.
@@ -17,7 +18,7 @@ public class NoobFileViewHolder extends RecyclerView.ViewHolder {
     private ImageView mFileImageView;
     private NoobFile mItem;
     private View mParent;
-    OnRecyclerViewItemClick<NoobFile> mListener;
+    private OnRecyclerViewItemClick<NoobFile> mListener;
 
     public NoobFileViewHolder(View itemView) {
         super(itemView);
@@ -59,11 +60,7 @@ public class NoobFileViewHolder extends RecyclerView.ViewHolder {
     public void setItem(NoobFile itemParam) {
         mItem = itemParam;
         mTitleText.setText(mItem.getName());
-        if (mItem.getBitmap() != null) {
-            getFileImageView().setImageBitmap(mItem.getBitmap());
-        } else {
-            getFileImageView().setImageResource(R.drawable.ic_file);
-        }
+        mItem.loadImage(getFileImageView());
     }
 
     public NoobFile getItem() {

@@ -7,19 +7,21 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.noob.noobfilechooser.NoobFileActivity;
 import com.noob.noobfilechooser.listeners.OnNoobFileSelected;
-import com.noob.noobfilechooser.managers.NoobFile;
-import com.noob.noobfilechooser.managers.NoobPrefsManager;
+import com.noob.noobfilechooser.managers.NoobManager;
+import com.noob.noobfilechooser.models.NoobFile;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     NoobFile mNoobFile;
     TextView mNameText, mTypeText, mUriText;
+    ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         mNameText = (TextView) findViewById(R.id.file_name_text);
         mTypeText = (TextView) findViewById(R.id.file_type_text);
         mUriText = (TextView) findViewById(R.id.file_uri_text);
+        mImageView = (ImageView) findViewById(R.id.image_view);
     }
 
     public void setNoobFile(NoobFile noobFileParam) {
@@ -35,10 +38,16 @@ public class MainActivity extends AppCompatActivity {
         mNameText.setText(mNoobFile.getName());
         mTypeText.setText(mNoobFile.getType());
         mUriText.setText(mNoobFile.getUri().toString());
+        if(mNoobFile.isImageFile()){
+            mImageView.setVisibility(View.VISIBLE);
+            mImageView.setImageURI(mNoobFile.getUri());
+        }else{
+            mImageView.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void onChooseFileClick(View view) {
-        NoobPrefsManager.getInstance().setNoobFileSelectedListener(new OnNoobFileSelected() {
+        NoobManager.getInstance().setNoobFileSelectedListener(new OnNoobFileSelected() {
             @Override
             public void onSingleFileSelection(NoobFile file) {
                 setNoobFile(file);
@@ -56,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     public void onDeleteFileClick(View view) {
         if (mNoobFile == null)
             return;
-        mNoobFile.getDocumentFile().delete();
+        mNoobFile.delete();
         if (!mNoobFile.getDocumentFile().exists()) {
             Toast.makeText(this, mNoobFile.getName() + " is deleted", Toast.LENGTH_LONG).show();
         } else {
@@ -76,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterfaceParam, int iParam) {
                         if (inputEdit.getText() != null && !inputEdit.getText().toString().isEmpty()) {
-                            mNoobFile.getDocumentFile().renameTo(inputEdit.getText().toString());
+                            mNoobFile.renameTo(inputEdit.getText().toString());
                             Toast.makeText(MainActivity.this, "Rename successful", Toast.LENGTH_LONG).show();
                         }
                     }

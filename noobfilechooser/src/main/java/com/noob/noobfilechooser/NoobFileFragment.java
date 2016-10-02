@@ -15,7 +15,8 @@ import android.widget.TextView;
 
 import com.noob.noobfilechooser.adapters.NoobFileAdapter;
 import com.noob.noobfilechooser.listeners.OnRecyclerViewItemClick;
-import com.noob.noobfilechooser.managers.NoobFile;
+import com.noob.noobfilechooser.models.NoobFile;
+import com.noob.noobfilechooser.managers.NoobManager;
 import com.noob.noobfilechooser.managers.NoobPrefsManager;
 import com.noob.noobfilechooser.managers.NoobSAFManager;
 
@@ -65,7 +66,7 @@ public class NoobFileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View parent = inflater.inflate(R.layout.fragment_noob_file, container, false);
+        View parent = inflater.inflate(NoobManager.getInstance().getConfig().getFileGridLayoutResource(), container, false);
         mTitleTextView = (TextView) parent.findViewById(R.id.noob_folder_title_text);
         mSelectionDoneButton = (ImageButton) parent.findViewById(R.id.button_selection_done);
         mSelectionCancelButton = (ImageButton) parent.findViewById(R.id.button_selection_cancel);
@@ -85,7 +86,7 @@ public class NoobFileFragment extends Fragment {
         mFileRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mNoobFileAdapter = new NoobFileAdapter(R.layout.item_noob_file_item);
+        mNoobFileAdapter = new NoobFileAdapter(NoobManager.getInstance().getConfig().getFileGridLayoutItemResource());
         mFileRecyclerView.setAdapter(mNoobFileAdapter);
 
         mNoobFileAdapter.setListener(new OnRecyclerViewItemClick<NoobFile>() {
@@ -97,8 +98,8 @@ public class NoobFileFragment extends Fragment {
                     if (model.isDirectory())
                         loadParent(model);
                     else {
-                        if (NoobPrefsManager.getInstance().getNoobFileSelectedListener() != null) {
-                            NoobPrefsManager.getInstance().getNoobFileSelectedListener().onSingleFileSelection(model);
+                        if (NoobManager.getInstance().getNoobFileSelectedListener() != null) {
+                            NoobManager.getInstance().getNoobFileSelectedListener().onSingleFileSelection(model);
                             getActivity().finish();
                         }
                     }
@@ -122,8 +123,8 @@ public class NoobFileFragment extends Fragment {
         mSelectionDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View viewParam) {
-                if (NoobPrefsManager.getInstance().getNoobFileSelectedListener() != null) {
-                    NoobPrefsManager.getInstance().getNoobFileSelectedListener().onMultipleFilesSelection(mSelectionFiles);
+                if (NoobManager.getInstance().getNoobFileSelectedListener() != null) {
+                    NoobManager.getInstance().getNoobFileSelectedListener().onMultipleFilesSelection(mSelectionFiles);
                     getActivity().finish();
                 }
             }

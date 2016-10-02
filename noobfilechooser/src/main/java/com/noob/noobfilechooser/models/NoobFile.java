@@ -1,4 +1,4 @@
-package com.noob.noobfilechooser.managers;
+package com.noob.noobfilechooser.models;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -11,6 +11,9 @@ import android.os.CancellationSignal;
 import android.provider.DocumentsContract;
 import android.support.v4.provider.DocumentFile;
 import android.util.Log;
+import android.widget.ImageView;
+
+import com.noob.noobfilechooser.managers.NoobManager;
 
 /**
  * Created by abhi on 27/09/16.
@@ -24,7 +27,7 @@ public class NoobFile {
     private boolean isTreeDoc;
     private boolean isDirectory;
     private DocumentFile documentFile;
-    private Bitmap mBitmap;
+    private Bitmap mThumbnail;
     private boolean mIsSelected = false;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -67,14 +70,74 @@ public class NoobFile {
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    public Bitmap loadBitmap(Context contextParam){
-        mBitmap = DocumentsContract.getDocumentThumbnail(contextParam.getContentResolver(),
+    public Bitmap loadThumbnail(Context contextParam) {
+        mThumbnail = DocumentsContract.getDocumentThumbnail(contextParam.getContentResolver(),
                 documentFile.getUri(),
                 new Point(60, 60),
                 new CancellationSignal()
         );
-        return mBitmap;
+        return mThumbnail;
     }
+
+    public int getIconResource() {
+        if (isDirectory()) {
+            return NoobManager.getInstance().getConfig().getFolderDrawableResource();
+        }
+        if (isImageFile()) {
+            return NoobManager.getInstance().getConfig().getImageFileDrawableResource();
+        }
+        if (isVideoFile()) {
+            return NoobManager.getInstance().getConfig().getVideoFileDrawableResource();
+        }
+        if (isAudioFile()) {
+            return NoobManager.getInstance().getConfig().getAudioFileDrawableResource();
+        }
+        return NoobManager.getInstance().getConfig().getFileDrawableResource();
+    }
+
+    public boolean loadImage(ImageView imageView) {
+        if (mThumbnail == null && isImageFile()) {
+            loadThumbnail(imageView.getContext());
+        }
+        if (mThumbnail != null) {
+            imageView.setImageBitmap(mThumbnail);
+            return true;
+        }
+        int iconResource = getIconResource();
+        if (iconResource > 0) {
+            imageView.setImageResource(iconResource);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isImageFile() {
+        if(getType()==null)
+            return false;
+        return getType().startsWith("image/");
+    }
+
+    public boolean isAudioFile() {
+        if(getType()==null)
+            return false;
+        return getType().startsWith("audio/");
+    }
+
+    public boolean isVideoFile() {
+        if(getType()==null)
+            return false;
+        return getType().startsWith("video/");
+    }
+
+    public boolean delete() {
+        return getDocumentFile() != null && getDocumentFile().delete();
+    }
+
+    public boolean renameTo(String fileName) {
+        return getDocumentFile() != null && getDocumentFile().renameTo(fileName);
+    }
+
+    //region Accessors
 
     public String getName() {
         return name;
@@ -116,7 +179,8 @@ public class NoobFile {
         mIsSelected = selectedParam;
     }
 
-    public Bitmap getBitmap() {
-        return mBitmap;
+    public Bitmap getThumbnail() {
+        return mThumbnail;
     }
+    //endregion
 }

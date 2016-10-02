@@ -1,6 +1,6 @@
 package com.noob.noobfilechooser.listeners;
 
-import com.noob.noobfilechooser.managers.NoobFile;
+import com.noob.noobfilechooser.models.NoobFile;
 
 import java.util.List;
 

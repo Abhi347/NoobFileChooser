@@ -5,9 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.noob.noobfilechooser.NoobFileViewHolder;
+import com.noob.noobfilechooser.viewmodels.NoobFileViewHolder;
 import com.noob.noobfilechooser.listeners.OnRecyclerViewItemClick;
-import com.noob.noobfilechooser.managers.NoobFile;
+import com.noob.noobfilechooser.models.NoobFile;
 
 import java.util.List;
 
