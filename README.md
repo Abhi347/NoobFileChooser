@@ -48,7 +48,10 @@ You just need to set a listener for selecting single and or multiple files (We n
 The result is provided in the form of NoobFile or a List of NoobFile objects. You can call `file.getDocumentFile()` to get the DocumentFile on which you can call delete or rename or any other operation.
 
 ## Contributions
-Feel free to report bugs, feedbacks or even suggest new features. I'd love to make it a great library.
+Feel free to report bugs, feedback or even suggest new features. I'd love to make it a great library.
+
+## Credits
+Icons are provided by [Icons8](https://icons8.com/web-app/12245/Image-File). Check with them for license, you want to use the icons in your project too.
 
 ## Donate
 [Paypal](https://paypal.me/Abhi347/5)
