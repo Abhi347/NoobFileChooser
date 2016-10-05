@@ -1,28 +1,29 @@
-package com.noob.noobfilechooser;
+package com.noob.noobfilechooser.fragments;
 
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.provider.DocumentFile;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.noob.noobfilechooser.R;
+import com.noob.noobfilechooser.R2;
 import com.noob.noobfilechooser.adapters.NoobFileAdapter;
 import com.noob.noobfilechooser.listeners.OnRecyclerViewItemClick;
-import com.noob.noobfilechooser.models.NoobFile;
 import com.noob.noobfilechooser.managers.NoobManager;
 import com.noob.noobfilechooser.managers.NoobPrefsManager;
 import com.noob.noobfilechooser.managers.NoobSAFManager;
+import com.noob.noobfilechooser.models.NoobFile;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
 
 
 /**
@@ -30,13 +31,22 @@ import java.util.List;
  * Use the {@link NoobFileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NoobFileFragment extends Fragment {
+public class NoobFileFragment extends BaseFragment {
 
+    @BindView(R2.id.noob_file_recycler_view)
     RecyclerView mFileRecyclerView;
+
+    @BindView(R2.id.noob_folder_title_text)
+    private TextView mTitleTextView;
+
+    @BindView(R2.id.button_selection_done)
+    ImageButton mSelectionDoneButton;
+
+    @BindView(R2.id.button_selection_cancel)
+    ImageButton mSelectionCancelButton;
+
     private GridLayoutManager mLayoutManager;
     NoobFileAdapter mNoobFileAdapter;
-    private TextView mTitleTextView;
-    ImageButton mSelectionDoneButton, mSelectionCancelButton;
 
     boolean mMultiSelectionMode = false;
 
@@ -54,26 +64,17 @@ public class NoobFileFragment extends Fragment {
      * @return A new instance of fragment NoobFileFragment.
      */
     public static NoobFileFragment newInstance() {
-        NoobFileFragment fragment = new NoobFileFragment();
-        return fragment;
+        return new NoobFileFragment();
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View parent = inflater.inflate(NoobManager.getInstance().getConfig().getFileGridLayoutResource(), container, false);
-        mTitleTextView = (TextView) parent.findViewById(R.id.noob_folder_title_text);
-        mSelectionDoneButton = (ImageButton) parent.findViewById(R.id.button_selection_done);
-        mSelectionCancelButton = (ImageButton) parent.findViewById(R.id.button_selection_cancel);
-        mFileRecyclerView = (RecyclerView) parent.findViewById(R.id.noob_file_recycler_view);
+    protected void onSetupView(View rootView) {
         initializeRecyclerView();
-        return parent;
+    }
+
+    @Override
+    protected int getLayout() {
+        return NoobManager.getInstance().getConfig().getFileGridLayoutResource();
     }
 
     protected int getColumnCount() {

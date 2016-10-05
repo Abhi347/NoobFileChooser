@@ -4,13 +4,21 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 
+import com.noob.noobfilechooser.fragments.NoobFileFragment;
 import com.noob.noobfilechooser.managers.NoobPermissionManager;
 import com.noob.noobfilechooser.managers.NoobPrefsManager;
 import com.noob.noobfilechooser.managers.NoobSAFManager;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class NoobFileActivity extends AppCompatActivity {
+
+    @BindView(R2.id.drawer_noob_activity)
+    DrawerLayout mDrawerLayout;
 
     NoobFileFragment mNoobFileFragment;
 
@@ -18,11 +26,25 @@ public class NoobFileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_noob_file);
+        ButterKnife.bind(this);
+
+        setupFragments();
 
         NoobPrefsManager.getInstance().init(this);
         if (checkPermissions()) {
             showFileFragment();
         }
+    }
+
+    protected void setupFragments() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frag_container, getNoobFileFragment())
+                .commitAllowingStateLoss();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.nav_container, getNoobFileFragment())
+                .commitAllowingStateLoss();
     }
 
     @Override
