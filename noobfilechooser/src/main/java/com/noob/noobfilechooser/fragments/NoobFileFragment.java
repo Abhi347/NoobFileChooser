@@ -15,9 +15,9 @@ import com.noob.noobfilechooser.R2;
 import com.noob.noobfilechooser.adapters.NoobFileAdapter;
 import com.noob.noobfilechooser.listeners.OnRecyclerViewItemClick;
 import com.noob.noobfilechooser.managers.NoobManager;
-import com.noob.noobfilechooser.managers.NoobPrefsManager;
 import com.noob.noobfilechooser.managers.NoobSAFManager;
 import com.noob.noobfilechooser.models.NoobFile;
+import com.noob.noobfilechooser.models.NoobStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,16 +131,21 @@ public class NoobFileFragment extends BaseFragment {
                 }
             }
         });
-        if (NoobManager.getInstance().getCurrentFile() == null) {
-            buildAndLoad(getActivity());
+        load(null, false);
+    }
+
+    public void load(NoobStorage storage, boolean forceLoad) {
+        if (forceLoad || NoobManager.getInstance().getCurrentFile() == null) {
+            if (storage != null)
+                buildAndLoad(getActivity(), storage);
         } else {
             loadCurrentFile(NoobManager.getInstance().getCurrentFile());
         }
     }
 
-    public void buildAndLoad(Activity activity) {
+    public void buildAndLoad(Activity activity, NoobStorage storage) {
         try {
-            NoobFile _file = NoobSAFManager.buildTreeFile(activity, NoobPrefsManager.getInstance().getSDCardUri());
+            NoobFile _file = NoobSAFManager.buildTreeFile(activity, storage.getUri());
             loadCurrentFile(_file);
         } catch (SecurityException ex) {
             ex.printStackTrace();
@@ -162,7 +167,7 @@ public class NoobFileFragment extends BaseFragment {
         }
     }
 
-    void turnOnMultiSelectMode(boolean flag){
+    void turnOnMultiSelectMode(boolean flag) {
         if (flag) {
             mMultiSelectionMode = true;
             mSelectionDoneButton.setVisibility(View.VISIBLE);

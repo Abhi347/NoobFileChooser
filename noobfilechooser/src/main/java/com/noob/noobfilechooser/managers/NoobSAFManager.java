@@ -3,16 +3,20 @@ package com.noob.noobfilechooser.managers;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
+import android.support.annotation.RequiresApi;
+import android.support.v4.provider.DocumentFile;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.noob.noobfilechooser.models.NoobFile;
+import com.noob.noobfilechooser.models.NoobStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,19 +26,19 @@ import java.util.List;
  */
 
 public class NoobSAFManager {
-    private static final int SDCARD_REQUEST_CODE = 4010;
+    private static final int ADD_STORAGE_REQUEST_CODE = 4010;
     private static final String TAG = "NoobSAFManager";
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void takeCardUriPermission(final Activity activityParam) {
         new AlertDialog.Builder(activityParam)
-                .setTitle("Need SD Card Permission")
-                .setMessage("Select SD Card root folder from next screen")
+                .setTitle("Need Storage Permission")
+                .setMessage("Select root (outermost) folder of storage you want to add from next screen")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterfaceParam, int iParam) {
                         Intent _intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                        activityParam.startActivityForResult(_intent, SDCARD_REQUEST_CODE);
+                        activityParam.startActivityForResult(_intent, ADD_STORAGE_REQUEST_CODE);
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -44,30 +48,62 @@ public class NoobSAFManager {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static boolean checkIfSDCardRoot(Uri uri) {
-        if(!isExternalStorageDocument(uri))
-            return false;
-        String docId = DocumentsContract.getTreeDocumentId(uri);
-        if (docId.endsWith(":")) {
-            return true;
-        } else {
-            return false;
-        }
+        return isExternalStorageDocument(uri) && isRootUri(uri);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private static boolean isRootUri(Uri uri) {
+        String docId = DocumentsContract.getTreeDocumentId(uri);
+        return docId.endsWith(":");
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static boolean onActivityResult(Activity activity, int requestCode, Intent data) {
-        if (requestCode == SDCARD_REQUEST_CODE) {
+        if (requestCode == ADD_STORAGE_REQUEST_CODE) {
             if (data != null && data.getData() != null) {
-                if (checkIfSDCardRoot(data.getData())) {
-                    NoobPrefsManager.getInstance().setSDCardUri(data.getData());
-                    return true;
-                }
+                Uri uri = data.getData();
+                return addUriToStorage(uri, activity);
             }
         }
         return false;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public static boolean addUriToStorage(Uri uri, Activity activity) {
+        if (uri != null) {
+            if (isRootUri(uri)) {
+                String title = getNameFromUri(uri, activity);
+                //NoobPrefsManager.getInstance().setSDCardUri(data.getData());
+                NoobStorage _storage = new NoobStorage(uri, title);
+                NoobPrefsManager.getInstance().addStorage(_storage);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public static String getNameFromUri(Uri uri, Context context) {
+        String title = null;
+        if (isRootUri(uri)) {
+            if (isInternalStorage(uri))
+                title = "Internal Storage";
+            else
+                title = "SD Card";
+        } else {
+            DocumentFile documentFile = DocumentFile.fromSingleUri(context, uri);
+            return documentFile.getName();
+        }
+        return title;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public static boolean isInternalStorage(Uri uri) {
+        return isExternalStorageDocument(uri) && DocumentsContract.getTreeDocumentId(uri).contains("primary");
+    }
+
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static NoobFile buildTreeFile(Activity activity, Uri uri) throws SecurityException{
+    public static NoobFile buildTreeFile(Activity activity, Uri uri) throws SecurityException {
         ContentResolver contentResolver = activity.getContentResolver();
         Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri,
                 DocumentsContract.getTreeDocumentId(uri));

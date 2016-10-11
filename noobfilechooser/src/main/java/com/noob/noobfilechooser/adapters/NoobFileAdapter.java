@@ -19,7 +19,7 @@ public class NoobFileAdapter extends RecyclerView.Adapter<NoobFileViewHolder> {
     private int mLayoutId;
     private NoobFile mParent;
     private List<NoobFile> mNoobFiles;
-    OnRecyclerViewItemClick<NoobFile> mListener;
+    private OnRecyclerViewItemClick<NoobFile> mListener;
 
     public NoobFileAdapter(int layoutId) {
         mLayoutId = layoutId;

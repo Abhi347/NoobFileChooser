@@ -13,6 +13,7 @@ public class NoobConfig {
     private int audioFileDrawableResource;
     private int videoFileDrawableResource;
     private int fileGridLayoutItemResource;
+    private int storageListLayoutItemResource;
     private int fileGridLayoutResource;
 
     public NoobConfig() {
@@ -23,6 +24,7 @@ public class NoobConfig {
         videoFileDrawableResource = R.drawable.ic_video_file;
         fileGridLayoutItemResource = R.layout.item_noob_file_item;
         fileGridLayoutResource = R.layout.fragment_noob_file;
+        storageListLayoutItemResource = R.layout.item_noob_storage_list;
     }
 
     //region Accessors
@@ -87,6 +89,15 @@ public class NoobConfig {
 
     public NoobConfig setFileGridLayoutResource(int fileGridLayoutResourceParam) {
         fileGridLayoutResource = fileGridLayoutResourceParam;
+        return this;
+    }
+
+    public int getStorageListLayoutItemResource() {
+        return storageListLayoutItemResource;
+    }
+
+    public NoobConfig setStorageListLayoutItemResource(int storageListLayoutItemResourceParam) {
+        storageListLayoutItemResource = storageListLayoutItemResourceParam;
         return this;
     }
     //endregion
