@@ -3,9 +3,9 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              tools:context="com.noob.noobfilechooser.NoobFileFragment">
+              tools:context="com.noob.noobfilechooser.fragments.NoobFileFragment">
 
-    <LinearLayout
+    <!--<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_cancel"/>
-    </LinearLayout>
+    </LinearLayout>-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/noob_file_recycler_view"

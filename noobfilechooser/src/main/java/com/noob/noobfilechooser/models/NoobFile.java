@@ -4,78 +4,121 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
-import android.os.CancellationSignal;
+import android.os.Environment;
 import android.provider.DocumentsContract;
+import android.support.annotation.RequiresApi;
 import android.support.v4.provider.DocumentFile;
-import android.util.Log;
 import android.widget.ImageView;
 
+import com.noob.noobfilechooser.managers.NoobFileManager;
 import com.noob.noobfilechooser.managers.NoobManager;
+import com.noob.noobfilechooser.managers.NoobSAFManager;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by abhi on 27/09/16.
  */
 
 public class NoobFile {
-    private String name;
-    private String mimeType;
-    private String docId;
-    private Uri uri;
+    private String mName;
+    private String mMimeType;
+    private String mDocId;
+    private Uri mUri;
     private boolean isTreeDoc;
     private boolean isDirectory;
-    private DocumentFile documentFile;
+    private DocumentFile mDocumentFile;
+    private File mFile;
     private Bitmap mThumbnail;
     private boolean mIsSelected = false;
+    private boolean mIsInvalid = false;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public NoobFile(Context contextParam, Cursor cursorParam, Uri treeUri, boolean isTreeDocParam) {
         isTreeDoc = isTreeDocParam;
 
-        name = cursorParam.getString(0);
-        mimeType = cursorParam.getString(1);
-        docId = cursorParam.getString(2);
-        isDirectory = mimeType.equalsIgnoreCase(DocumentsContract.Document.MIME_TYPE_DIR);
+        //mName = cursorParam.getString(0);
+        mMimeType = cursorParam.getString(1);
+        mDocId = cursorParam.getString(2);
+        isDirectory = mMimeType.equalsIgnoreCase(DocumentsContract.Document.MIME_TYPE_DIR);
 
         if (isTreeDoc) {
-            uri = treeUri;
-            documentFile = DocumentFile.fromTreeUri(contextParam, treeUri);
+            mUri = treeUri;
+            mDocumentFile = DocumentFile.fromTreeUri(contextParam, treeUri);
         } else {
-            uri = DocumentsContract.buildDocumentUriUsingTree(treeUri, docId);
+            mUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, mDocId);
             if (isDirectory) {
-                documentFile = DocumentFile.fromTreeUri(contextParam, uri);
+                mDocumentFile = DocumentFile.fromTreeUri(contextParam, mUri);
             } else {
-                documentFile = DocumentFile.fromSingleUri(contextParam, uri);
+                mDocumentFile = DocumentFile.fromSingleUri(contextParam, mUri);
             }
         }
 
-        if (documentFile.exists()) {
-            Log.d("DocumentENtry", "Exists true " + name);
+        /*if (mDocumentFile.exists()) {
+            Log.d("DocumentENtry", "Exists true " + mName);
         } else {
-            Log.d("DocumentENtry", "Exists false " + name);
-        }
+            Log.d("DocumentENtry", "Exists false " + mName);
+        }*/
+        mName = NoobSAFManager.getValidName(mDocumentFile, isTreeDoc());
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public NoobFile(DocumentFile docFileParam) {
+        loadDocFile(docFileParam);
+    }
+
+    public NoobFile(File fileParam) {
+        loadFile(fileParam);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void loadDocFile(DocumentFile docFileParam) {
         isTreeDoc = false;
-        documentFile = docFileParam;
-        isDirectory = documentFile.isDirectory();
-        uri = docFileParam.getUri();
-        name = docFileParam.getName();
-        mimeType = docFileParam.getType();
-        docId = DocumentsContract.getDocumentId(uri);
+        mDocumentFile = docFileParam;
+        isDirectory = mDocumentFile.isDirectory();
+        mUri = docFileParam.getUri();
+        mName = NoobSAFManager.getValidName(mDocumentFile, isTreeDoc());
+        mMimeType = docFileParam.getType();
+        mDocId = DocumentsContract.getDocumentId(mUri);
+    }
+
+    private void loadFile(File fileParam) {
+        String internalStoragePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        isTreeDoc = fileParam.getAbsolutePath().equalsIgnoreCase(internalStoragePath);
+        mFile = fileParam;
+        isDirectory = mFile.isDirectory();
+        mName = NoobFileManager.getValidName(mFile, isTreeDoc());
+        mMimeType = NoobFileManager.getMimeType(mFile.getPath());
+    }
+
+    public List<NoobFile> getChildren() {
+        List<NoobFile> children = new ArrayList<>();
+        if (getDocumentFile() != null) {
+            DocumentFile[] _files = getDocumentFile().listFiles();
+            for (DocumentFile docFile : _files) {
+                children.add(new NoobFile(docFile));
+            }
+        } else if (getFile() != null) {
+            File[] _files = getFile().listFiles();
+            for (File file : _files) {
+                children.add(new NoobFile(file));
+            }
+        }
+        return children;
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    public Bitmap loadThumbnail(Context contextParam) {
-        mThumbnail = DocumentsContract.getDocumentThumbnail(contextParam.getContentResolver(),
-                documentFile.getUri(),
-                new Point(60, 60),
-                new CancellationSignal()
-        );
+    private Bitmap loadThumbnailSAF(Context contextParam) {
+        mThumbnail = NoobFileManager.getThumbnail(mDocumentFile, contextParam, 60, 60);
+        return mThumbnail;
+    }
+
+    private Bitmap loadThumbnail() {
+        mThumbnail = NoobFileManager.getThumbnail(mFile, 100, 100);
         return mThumbnail;
     }
 
@@ -97,7 +140,10 @@ public class NoobFile {
 
     public boolean loadImage(ImageView imageView) {
         if (mThumbnail == null && isImageFile()) {
-            loadThumbnail(imageView.getContext());
+            if (mDocumentFile != null)
+                loadThumbnailSAF(imageView.getContext());
+            else
+                loadThumbnail();
         }
         if (mThumbnail != null) {
             imageView.setImageBitmap(mThumbnail);
@@ -112,58 +158,103 @@ public class NoobFile {
     }
 
     public boolean isImageFile() {
-        if(getType()==null)
+        if (getType() == null)
             return false;
         return getType().startsWith("image/");
     }
 
     public boolean isAudioFile() {
-        if(getType()==null)
+        if (getType() == null)
             return false;
         return getType().startsWith("audio/");
     }
 
     public boolean isVideoFile() {
-        if(getType()==null)
+        if (getType() == null)
             return false;
         return getType().startsWith("video/");
     }
 
-    public DocumentFile getParent(){
-        if (!isTreeDoc() ){
+    public DocumentFile getParentDoc() {
+        if (!isTreeDoc()) {
             return getDocumentFile().getParentFile();
         }
         return null;
     }
 
+    public File getParent() {
+        if (!isTreeDoc()) {
+            return getFile().getParentFile();
+        }
+        return null;
+    }
+
+    public NoobFile getParentNoobFile() {
+        if (isTreeDoc())
+            return null;
+        if (getDocumentFile() != null) {
+            return new NoobFile(getParentDoc());
+        }
+        if (getFile() != null) {
+            return new NoobFile(getParent());
+        }
+        return null;
+    }
+
+
     public boolean delete() {
-        return getDocumentFile() != null && getDocumentFile().delete();
+        boolean success = false;
+        if (getDocumentFile() != null) {
+            success = getDocumentFile().delete();
+        } else {
+            success = getFile().delete();
+        }
+        if (success)
+            mIsInvalid = true;
+        return success;
     }
 
     public boolean renameTo(String fileName) {
-        return getDocumentFile() != null && getDocumentFile().renameTo(fileName);
+        if (getDocumentFile() != null) {
+            boolean success = getDocumentFile().renameTo(fileName);
+            if (success)
+                mIsInvalid = true;
+            return success;
+        } else if (getFile() != null) {
+            File _file = new File(getFile().getParent() + "/" + fileName);
+            boolean success = getFile().renameTo(_file);
+            if (success && _file.exists()) {
+                loadFile(_file);
+            }
+            return success;
+        }
+        return false;
     }
 
     //region Accessors
 
     public String getName() {
-        return name;
+        return mName;
     }
 
     public void setName(String nameParam) {
-        name = nameParam;
+        mName = nameParam;
     }
 
     public String getType() {
-        return mimeType;
+        return mMimeType;
     }
 
     public Uri getUri() {
-        return uri;
+        return mUri;
     }
 
     public DocumentFile getDocumentFile() {
-        return documentFile;
+        return mDocumentFile;
+    }
+
+    public File getFile() {
+        return mFile;
     }
 
     public boolean isDirectory() {
@@ -175,7 +266,7 @@ public class NoobFile {
     }
 
     public String getDocId() {
-        return docId;
+        return mDocId;
     }
 
     public boolean isSelected() {
@@ -188,6 +279,10 @@ public class NoobFile {
 
     public Bitmap getThumbnail() {
         return mThumbnail;
+    }
+
+    public boolean isInvalid() {
+        return mIsInvalid;
     }
     //endregion
 }

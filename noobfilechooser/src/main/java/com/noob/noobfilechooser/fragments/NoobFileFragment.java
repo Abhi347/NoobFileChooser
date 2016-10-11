@@ -1,47 +1,46 @@
-package com.noob.noobfilechooser;
+package com.noob.noobfilechooser.fragments;
 
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.provider.DocumentFile;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
+import com.noob.noobfilechooser.R;
+import com.noob.noobfilechooser.R2;
 import com.noob.noobfilechooser.adapters.NoobFileAdapter;
+import com.noob.noobfilechooser.listeners.NoobFileFragmentDelegate;
 import com.noob.noobfilechooser.listeners.OnRecyclerViewItemClick;
-import com.noob.noobfilechooser.models.NoobFile;
 import com.noob.noobfilechooser.managers.NoobManager;
-import com.noob.noobfilechooser.managers.NoobPrefsManager;
 import com.noob.noobfilechooser.managers.NoobSAFManager;
+import com.noob.noobfilechooser.models.NoobFile;
+import com.noob.noobfilechooser.models.NoobStorage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link BaseFragment} subclass.
  * Use the {@link NoobFileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NoobFileFragment extends Fragment {
+public class NoobFileFragment extends BaseFragment {
 
+    @BindView(R2.id.noob_file_recycler_view)
     RecyclerView mFileRecyclerView;
-    private GridLayoutManager mLayoutManager;
-    NoobFileAdapter mNoobFileAdapter;
-    private TextView mTitleTextView;
-    ImageButton mSelectionDoneButton, mSelectionCancelButton;
 
-    boolean mMultiSelectionMode = false;
+    private NoobFileAdapter mNoobFileAdapter;
 
-    List<NoobFile> mSelectionFiles = new ArrayList<>();
-    List<View> mSelectionViews = new ArrayList<>();
+    private boolean mMultiSelectionMode = false;
+
+    private List<NoobFile> mSelectionFiles = new ArrayList<>();
+    private List<View> mSelectionViews = new ArrayList<>();
+    private NoobFileFragmentDelegate mDelegate;
 
     public NoobFileFragment() {
         // Required empty public constructor
@@ -54,26 +53,19 @@ public class NoobFileFragment extends Fragment {
      * @return A new instance of fragment NoobFileFragment.
      */
     public static NoobFileFragment newInstance() {
-        NoobFileFragment fragment = new NoobFileFragment();
-        return fragment;
+        return new NoobFileFragment();
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View parent = inflater.inflate(NoobManager.getInstance().getConfig().getFileGridLayoutResource(), container, false);
-        mTitleTextView = (TextView) parent.findViewById(R.id.noob_folder_title_text);
-        mSelectionDoneButton = (ImageButton) parent.findViewById(R.id.button_selection_done);
-        mSelectionCancelButton = (ImageButton) parent.findViewById(R.id.button_selection_cancel);
-        mFileRecyclerView = (RecyclerView) parent.findViewById(R.id.noob_file_recycler_view);
+    protected void onSetupView(View rootView) {
         initializeRecyclerView();
-        return parent;
+        if (mDelegate != null)
+            mDelegate.onFileFragmentViewLoaded();
+    }
+
+    @Override
+    protected int getLayout() {
+        return NoobManager.getInstance().getConfig().getFileGridLayoutResource();
     }
 
     protected int getColumnCount() {
@@ -81,10 +73,12 @@ public class NoobFileFragment extends Fragment {
     }
 
     void initializeRecyclerView() {
+
         turnOnMultiSelectMode(false);
+
         mFileRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new GridLayoutManager(getActivity(), getColumnCount());
-        mFileRecyclerView.setLayoutManager(mLayoutManager);
+        GridLayoutManager _layoutManager = new GridLayoutManager(getActivity(), getColumnCount());
+        mFileRecyclerView.setLayoutManager(_layoutManager);
 
         // specify an adapter (see also next example)
         mNoobFileAdapter = new NoobFileAdapter(NoobManager.getInstance().getConfig().getFileGridLayoutItemResource());
@@ -115,7 +109,7 @@ public class NoobFileFragment extends Fragment {
                 selectFile(model, view);
             }
         });
-        mSelectionCancelButton.setOnClickListener(new View.OnClickListener() {
+        /*mSelectionCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View viewParam) {
                 turnOnMultiSelectMode(false);
@@ -129,17 +123,28 @@ public class NoobFileFragment extends Fragment {
                     getActivity().finish();
                 }
             }
-        });
-        if (NoobManager.getInstance().getCurrentFile() == null) {
-            buildAndLoad(getActivity());
+        });*/
+        load(null, false);
+    }
+
+    public void load(NoobStorage storage, boolean forceLoad) {
+        if (forceLoad || NoobManager.getInstance().getCurrentFile() == null) {
+            if (storage != null)
+                buildAndLoad(getActivity(), storage);
         } else {
             loadCurrentFile(NoobManager.getInstance().getCurrentFile());
         }
     }
 
-    public void buildAndLoad(Activity activity) {
+    public void buildAndLoad(Activity activity, NoobStorage storage) {
         try {
-            NoobFile _file = NoobSAFManager.buildTreeFile(activity, NoobPrefsManager.getInstance().getSDCardUri());
+            NoobFile _file;
+            if (storage.getUri() != null) {
+                _file = NoobSAFManager.buildTreeFile(activity, storage.getUri());
+            } else {
+                File _legacyFile = new File(storage.getAbsolutePath());
+                _file = new NoobFile(_legacyFile);
+            }
             loadCurrentFile(_file);
         } catch (SecurityException ex) {
             ex.printStackTrace();
@@ -161,11 +166,9 @@ public class NoobFileFragment extends Fragment {
         }
     }
 
-    void turnOnMultiSelectMode(boolean flag) {
+    public void turnOnMultiSelectMode(boolean flag) {
         if (flag) {
             mMultiSelectionMode = true;
-            mSelectionDoneButton.setVisibility(View.VISIBLE);
-            mSelectionCancelButton.setVisibility(View.VISIBLE);
         } else {
             mMultiSelectionMode = false;
             for (View view : mSelectionViews) {
@@ -173,24 +176,24 @@ public class NoobFileFragment extends Fragment {
             }
             mSelectionFiles.clear();
             mSelectionViews.clear();
-            mSelectionDoneButton.setVisibility(View.GONE);
-            mSelectionCancelButton.setVisibility(View.GONE);
+        }
+        if (mDelegate != null) {
+            mDelegate.onSelectionModeChanged(mMultiSelectionMode);
         }
     }
 
     void loadCurrentFile(NoobFile fileParam) {
         NoobManager.getInstance().setCurrentFile(fileParam);
-        if (mTitleTextView != null)
-            mTitleTextView.setText(fileParam.getName());
+        /*if (mTitleTextView != null)
+            mTitleTextView.setText(fileParam.getName());*/
+        if (mDelegate != null && fileParam.isDirectory()) {
+            mDelegate.onLoadFolder(fileParam);
+        }
         /*if (parentParam.isTreeDoc())
             mNoobFileAdapter.setItems(parentParam, NoobSAFManager.buildChildFiles(getActivity(), parentParam.getUri()));
         else*/
-        if (mNoobFileAdapter!=null && fileParam.isDirectory()) {
-            DocumentFile[] _children = fileParam.getDocumentFile().listFiles();
-            List<NoobFile> noobChildFiles = new ArrayList<>();
-            for (DocumentFile docFile : _children) {
-                noobChildFiles.add(new NoobFile(docFile));
-            }
+        if (mNoobFileAdapter != null && fileParam.isDirectory()) {
+            List<NoobFile> noobChildFiles = fileParam.getChildren();
             mNoobFileAdapter.setItems(fileParam, noobChildFiles);
         }
     }
@@ -202,12 +205,20 @@ public class NoobFileFragment extends Fragment {
         }
         NoobFile _currentFile = NoobManager.getInstance().getCurrentFile();
         if (_currentFile != null) {
-            DocumentFile _parentFile = _currentFile.getParent();
+            NoobFile _parentFile = _currentFile.getParentNoobFile();
             if (_parentFile != null) {
-                loadCurrentFile(new NoobFile(_parentFile));
+                loadCurrentFile(_parentFile);
                 return true;
             }
         }
         return false;
+    }
+
+    public void setDelegate(NoobFileFragmentDelegate delegateParam) {
+        mDelegate = delegateParam;
+    }
+
+    public List<NoobFile> getSelectionFiles() {
+        return mSelectionFiles;
     }
 }
