@@ -25,15 +25,15 @@ import butterknife.BindView;
 public class NoobDrawerFragment extends BaseFragment {
 
     @BindView(R2.id.noob_drawer_recycler_view)
-    RecyclerView mDrawerRecyclerView;
+    protected RecyclerView mDrawerRecyclerView;
     private NoobDrawerAdapter mNoobDrawerAdapter;
 
     private OnRecyclerViewItemClick<NoobStorage> mStorageItemClickListener;
     private NoobDrawerFragmentDelegate mDelegate;
 
-    public NoobDrawerFragment() {
+    /*public NoobDrawerFragment() {
         // Required empty public constructor
-    }
+    }*/
 
     @Override
     protected void onSetupView(View rootView) {
@@ -42,7 +42,7 @@ public class NoobDrawerFragment extends BaseFragment {
             mDelegate.onDrawerViewLoaded();
     }
 
-    void initializeRecyclerView() {
+    protected void initializeRecyclerView() {
         LinearLayoutManager _layoutManager = new LinearLayoutManager(getActivity());
         mDrawerRecyclerView.setLayoutManager(_layoutManager);
 

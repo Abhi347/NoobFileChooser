@@ -32,7 +32,7 @@ import butterknife.BindView;
 public class NoobFileFragment extends BaseFragment {
 
     @BindView(R2.id.noob_file_recycler_view)
-    RecyclerView mFileRecyclerView;
+    protected RecyclerView mFileRecyclerView;
 
     private NoobFileAdapter mNoobFileAdapter;
 
@@ -42,9 +42,9 @@ public class NoobFileFragment extends BaseFragment {
     private List<View> mSelectionViews = new ArrayList<>();
     private NoobFileFragmentDelegate mDelegate;
 
-    public NoobFileFragment() {
+    /*public NoobFileFragment() {
         // Required empty public constructor
-    }
+    }*/
 
     /**
      * Use this factory method to create a new instance of
@@ -72,7 +72,7 @@ public class NoobFileFragment extends BaseFragment {
         return 3;
     }
 
-    void initializeRecyclerView() {
+    protected void initializeRecyclerView() {
 
         turnOnMultiSelectMode(false);
 
@@ -152,7 +152,7 @@ public class NoobFileFragment extends BaseFragment {
         }
     }
 
-    void selectFile(NoobFile file, View view) {
+    protected void selectFile(NoobFile file, View view) {
         if (file.isSelected()) {
             file.setSelected(false);
             mSelectionFiles.remove(file);
@@ -182,7 +182,7 @@ public class NoobFileFragment extends BaseFragment {
         }
     }
 
-    void loadCurrentFile(NoobFile fileParam) {
+    protected void loadCurrentFile(NoobFile fileParam) {
         NoobManager.getInstance().setCurrentFile(fileParam);
         /*if (mTitleTextView != null)
             mTitleTextView.setText(fileParam.getName());*/
@@ -194,7 +194,7 @@ public class NoobFileFragment extends BaseFragment {
         else*/
         if (mNoobFileAdapter != null && fileParam.isDirectory()) {
             List<NoobFile> noobChildFiles = fileParam.getChildren();
-            mNoobFileAdapter.setItems(fileParam, noobChildFiles);
+            mNoobFileAdapter.setItems(noobChildFiles);
         }
     }
 

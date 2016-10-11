@@ -3,9 +3,7 @@ package com.noob.noobfilechooser.managers;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Environment;
-import android.support.annotation.RequiresApi;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -18,6 +16,14 @@ import java.util.ArrayList;
  */
 
 public class NoobPrefsManager {
+    private static final String PREFS_FILE = "PREFS_FILE";
+    //private static final String KEY_URI = "KEY_URI";
+    private static final String KEY_STORAGE = "KEY_STORAGE";
+
+    //private Uri mSDCardUri;
+    private SharedPreferences mPreferences;
+
+    private ArrayList<NoobStorage> mNoobStorageList;
     //region singleton
     private static NoobPrefsManager mInstance;
 
@@ -31,18 +37,7 @@ public class NoobPrefsManager {
     }
     //endregion
 
-    private static final String PREFS_FILE = "PREFS_FILE";
-    //private static final String KEY_URI = "KEY_URI";
-    private static final String KEY_STORAGE = "KEY_STORAGE";
-
-    //private Uri mSDCardUri;
-    private SharedPreferences mPreferences;
-    private Activity mContext;
-
-    private ArrayList<NoobStorage> mNoobStorageList;
-
     public void init(Activity context) {
-        mContext = context;
         mPreferences = context.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
     }
 
@@ -56,13 +51,10 @@ public class NoobPrefsManager {
             mNoobStorageList = new ArrayList<>();
         }
         if (mNoobStorageList.size() <= 0) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                loadInternalStorage();
-            }
+            loadInternalStorage();
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void loadInternalStorage() {
         //This method gives Security Exception. So it's better to go with the legacy approach using File
         /*String internalStorageStr = "content://com.android.externalstorage.documents/tree/primary%3A";

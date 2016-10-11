@@ -10,6 +10,9 @@ import com.noob.noobfilechooser.utility.NoobConfig;
 
 //This file is supposed to be a single point contact for the client
 public class NoobManager {
+    private OnNoobFileSelected mNoobFileSelectedListener;
+    private NoobConfig mConfig;
+    private NoobFile mCurrentFile;
     //region singleton
     private static NoobManager mInstance;
 
@@ -22,10 +25,6 @@ public class NoobManager {
     private NoobManager() {
     }
     //endregion
-
-    private OnNoobFileSelected mNoobFileSelectedListener;
-    private NoobConfig mConfig;
-    private NoobFile mCurrentFile;
 
     public OnNoobFileSelected getNoobFileSelectedListener() {
         return mNoobFileSelectedListener;

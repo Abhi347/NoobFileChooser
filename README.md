@@ -1,4 +1,4 @@
-[![](https://jitpack.io/v/Abhi347/NoobFileChooser.svg)](https://jitpack.io/#Abhi347/NoobFileChooser) [![Build Status](https://travis-ci.org/Abhi347/NoobFileChooser.svg?branch=master)](https://travis-ci.org/Abhi347/NoobFileChooser)
+[![](https://jitpack.io/v/Abhi347/NoobFileChooser.svg)](https://jitpack.io/#Abhi347/NoobFileChooser) [![Build Status](https://travis-ci.org/Abhi347/NoobFileChooser.svg?branch=master)](https://travis-ci.org/Abhi347/NoobFileChooser) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8c4e118dacf648a1b3cc7e6675d71c3e)](https://www.codacy.com/app/josh-abhi143/NoobFileChooser?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Abhi347/NoobFileChooser&amp;utm_campaign=Badge_Grade)
 
 # NoobFileChooser - SAF ready file chooser for Android
 A complete File manager for Android with complete support of Storage Access Framework. Now you won't need to rely on Android's stock system UI to deliver files from the External SD Card. 

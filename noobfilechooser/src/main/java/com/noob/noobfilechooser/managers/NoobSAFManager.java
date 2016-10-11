@@ -70,14 +70,12 @@ public class NoobSAFManager {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static boolean addUriToStorage(Uri uri, Activity activity) {
-        if (uri != null) {
-            if (checkIfSDCardRoot(uri)) {
-                String title = getNameFromUri(uri, activity);
-                //NoobPrefsManager.getInstance().setSDCardUri(data.getData());
-                NoobStorage _storage = new NoobStorage(uri, title);
-                NoobPrefsManager.getInstance().addStorage(_storage);
-                return true;
-            }
+        if (uri != null && checkIfSDCardRoot(uri)) {
+            String title = getNameFromUri(uri, activity);
+            //NoobPrefsManager.getInstance().setSDCardUri(data.getData());
+            NoobStorage _storage = new NoobStorage(uri, title);
+            NoobPrefsManager.getInstance().addStorage(_storage);
+            return true;
         }
         return false;
     }

@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
@@ -31,22 +32,22 @@ import butterknife.OnClick;
 public class NoobFileActivity extends AppCompatActivity implements NoobFileFragmentDelegate, NoobDrawerFragmentDelegate {
 
     @BindView(R2.id.drawer_noob_activity)
-    DrawerLayout mDrawerLayout;
+    protected DrawerLayout mDrawerLayout;
 
     @BindView(R2.id.toolbar_title)
-    TextView mToolbarTitleTextView;
+    protected TextView mToolbarTitleTextView;
 
     @BindView(R2.id.my_toolbar)
-    Toolbar mToolbar;
+    protected Toolbar mToolbar;
 
     @BindView(R2.id.button_selection_done)
-    ImageButton mSelectionDoneButton;
+    protected ImageButton mSelectionDoneButton;
 
     @BindView(R2.id.button_selection_cancel)
-    ImageButton mSelectionCancelButton;
+    protected ImageButton mSelectionCancelButton;
 
-    NoobFileFragment mNoobFileFragment;
-    NoobDrawerFragment mNoobDrawerFragment;
+    protected NoobFileFragment mNoobFileFragment;
+    protected NoobDrawerFragment mNoobDrawerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +86,7 @@ public class NoobFileActivity extends AppCompatActivity implements NoobFileFragm
 
             @Override
             public void onLongClick(NoobStorage model, View view) {
-
+                Log.d("NoobFileActivity","onLongClick");
             }
         });
     }
@@ -219,14 +220,14 @@ public class NoobFileActivity extends AppCompatActivity implements NoobFileFragm
     }
 
     @OnClick(R2.id.button_selection_cancel)
-    void onSelectionCancelClick(View view) {
+    public void onSelectionCancelClick(View view) {
         getNoobFileFragment().turnOnMultiSelectMode(false);
         mSelectionDoneButton.setVisibility(View.GONE);
         mSelectionCancelButton.setVisibility(View.GONE);
     }
 
     @OnClick(R2.id.button_selection_done)
-    void onSelectionDoneClick(View view) {
+    public void onSelectionDoneClick(View view) {
         if (NoobManager.getInstance().getNoobFileSelectedListener() != null) {
             NoobManager.getInstance().getNoobFileSelectedListener().onMultipleFilesSelection(getNoobFileFragment().getSelectionFiles());
             this.finish();

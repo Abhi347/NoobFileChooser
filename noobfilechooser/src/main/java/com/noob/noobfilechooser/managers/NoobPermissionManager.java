@@ -24,24 +24,22 @@ public class NoobPermissionManager {
         if (checkPermission(activity, permission))
             return true;
         boolean shouldRequestPermission = true;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (shouldShowDialog && activity.shouldShowRequestPermissionRationale(permission)) {
-                showPermissionRationale(activity,
-                        rationaleMessage,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterfaceParam, int iParam) {
-                                takePermission(activity, permission, null, false);
-                            }
-                        },
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterfaceParam, int iParam) {
-                                //TODO: Show an Error Message
-                            }
-                        });
-                shouldRequestPermission = false;
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowDialog && activity.shouldShowRequestPermissionRationale(permission)) {
+            showPermissionRationale(activity,
+                    rationaleMessage,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterfaceParam, int iParam) {
+                            takePermission(activity, permission, null, false);
+                        }
+                    },
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterfaceParam, int iParam) {
+                            //TODO: Show an Error Message
+                        }
+                    });
+            shouldRequestPermission = false;
         }
 
         if (shouldRequestPermission) {

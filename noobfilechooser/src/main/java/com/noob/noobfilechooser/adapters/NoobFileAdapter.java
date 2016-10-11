@@ -17,7 +17,6 @@ import java.util.List;
 
 public class NoobFileAdapter extends RecyclerView.Adapter<NoobFileViewHolder> {
     private int mLayoutId;
-    private NoobFile mParent;
     private List<NoobFile> mNoobFiles;
     private OnRecyclerViewItemClick<NoobFile> mListener;
 
@@ -39,8 +38,7 @@ public class NoobFileAdapter extends RecyclerView.Adapter<NoobFileViewHolder> {
         holder.setItem(mNoobFiles.get(position));
     }
 
-    public void setItems(NoobFile parent, List<NoobFile> noobFileListParam) {
-        mParent = parent;
+    public void setItems(List<NoobFile> noobFileListParam) {
         if(mNoobFiles==null){
             mNoobFiles = noobFileListParam;
         }else {

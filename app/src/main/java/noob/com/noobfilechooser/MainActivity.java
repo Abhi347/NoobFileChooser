@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,9 +20,9 @@ import com.noob.noobfilechooser.models.NoobFile;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    NoobFile mNoobFile;
-    TextView mNameText, mTypeText, mUriText;
-    ImageView mImageView;
+    private NoobFile mNoobFile;
+    private TextView mNameText, mTypeText, mUriText;
+    private ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onMultipleFilesSelection(List<NoobFile> files) {
-
+                Log.d("MainActivity","Multiple File selected");
             }
         });
         Intent _intent = new Intent(this, NoobFileActivity.class);
