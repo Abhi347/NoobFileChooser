@@ -9,4 +9,5 @@ import com.noob.noobfilechooser.models.NoobFile;
 public interface NoobFileFragmentDelegate {
     void onLoadFolder(NoobFile newFile);
     void onSelectionModeChanged(boolean isMultiSelectOn);
+    void onFileFragmentViewLoaded();
 }

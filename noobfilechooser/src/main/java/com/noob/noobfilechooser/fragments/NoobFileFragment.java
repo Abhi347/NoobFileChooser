@@ -7,10 +7,10 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.noob.noobfilechooser.NoobFileActivity;
 import com.noob.noobfilechooser.R;
 import com.noob.noobfilechooser.R2;
 import com.noob.noobfilechooser.adapters.NoobFileAdapter;
+import com.noob.noobfilechooser.listeners.NoobFileFragmentDelegate;
 import com.noob.noobfilechooser.listeners.OnRecyclerViewItemClick;
 import com.noob.noobfilechooser.managers.NoobManager;
 import com.noob.noobfilechooser.managers.NoobSAFManager;
@@ -40,7 +40,7 @@ public class NoobFileFragment extends BaseFragment {
 
     private List<NoobFile> mSelectionFiles = new ArrayList<>();
     private List<View> mSelectionViews = new ArrayList<>();
-    private NoobFileActivity mDelegate;
+    private NoobFileFragmentDelegate mDelegate;
 
     public NoobFileFragment() {
         // Required empty public constructor
@@ -59,6 +59,8 @@ public class NoobFileFragment extends BaseFragment {
     @Override
     protected void onSetupView(View rootView) {
         initializeRecyclerView();
+        if (mDelegate != null)
+            mDelegate.onFileFragmentViewLoaded();
     }
 
     @Override
@@ -212,7 +214,7 @@ public class NoobFileFragment extends BaseFragment {
         return false;
     }
 
-    public void setDelegate(NoobFileActivity delegateParam) {
+    public void setDelegate(NoobFileFragmentDelegate delegateParam) {
         mDelegate = delegateParam;
     }
 

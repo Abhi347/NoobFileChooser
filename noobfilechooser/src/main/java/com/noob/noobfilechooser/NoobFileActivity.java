@@ -9,12 +9,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.noob.noobfilechooser.fragments.NoobDrawerFragment;
 import com.noob.noobfilechooser.fragments.NoobFileFragment;
+import com.noob.noobfilechooser.listeners.NoobDrawerFragmentDelegate;
 import com.noob.noobfilechooser.listeners.NoobFileFragmentDelegate;
 import com.noob.noobfilechooser.listeners.OnRecyclerViewItemClick;
 import com.noob.noobfilechooser.managers.NoobManager;
@@ -28,7 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class NoobFileActivity extends AppCompatActivity implements NoobFileFragmentDelegate {
+public class NoobFileActivity extends AppCompatActivity implements NoobFileFragmentDelegate, NoobDrawerFragmentDelegate {
 
     @BindView(R2.id.drawer_noob_activity)
     DrawerLayout mDrawerLayout;
@@ -132,7 +132,7 @@ public class NoobFileActivity extends AppCompatActivity implements NoobFileFragm
 
                 }
 
-                loadStorage();
+                //loadStorage();
                 //if (NoobPrefsManager.getInstance().getNoobStorageList().size() > 0)
                 //getNoobFileFragment().buildAndLoad(NoobFileActivity.this, NoobPrefsManager.getInstance().getNoobStorageList().get(0));
 
@@ -181,6 +181,7 @@ public class NoobFileActivity extends AppCompatActivity implements NoobFileFragm
 
     protected void setNoobDrawerFragment(NoobDrawerFragment noobDrawerFragmentParam) {
         mNoobDrawerFragment = noobDrawerFragmentParam;
+        mNoobDrawerFragment.setDelegate(this);
     }
 
     public void onAddStorageClick(View view) {
@@ -208,6 +209,15 @@ public class NoobFileActivity extends AppCompatActivity implements NoobFileFragm
         }
     }
 
+    @Override
+    public void onFileFragmentViewLoaded() {
+        int storageCount = NoobPrefsManager.getInstance().getNoobStorageList().size();
+        if (storageCount > 0) {
+            NoobStorage _storage = NoobPrefsManager.getInstance().getNoobStorageList().get(storageCount - 1);
+            getNoobFileFragment().load(_storage, false);
+        }
+    }
+
     @OnClick(R2.id.button_selection_cancel)
     void onSelectionCancelClick(View view) {
         getNoobFileFragment().turnOnMultiSelectMode(false);
@@ -221,5 +231,10 @@ public class NoobFileActivity extends AppCompatActivity implements NoobFileFragm
             NoobManager.getInstance().getNoobFileSelectedListener().onMultipleFilesSelection(getNoobFileFragment().getSelectionFiles());
             this.finish();
         }
+    }
+
+    @Override
+    public void onDrawerViewLoaded() {
+        loadStorage();
     }
 }

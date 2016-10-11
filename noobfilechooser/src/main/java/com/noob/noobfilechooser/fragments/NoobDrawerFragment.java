@@ -9,6 +9,7 @@ import android.view.View;
 import com.noob.noobfilechooser.R;
 import com.noob.noobfilechooser.R2;
 import com.noob.noobfilechooser.adapters.NoobDrawerAdapter;
+import com.noob.noobfilechooser.listeners.NoobDrawerFragmentDelegate;
 import com.noob.noobfilechooser.listeners.OnRecyclerViewItemClick;
 import com.noob.noobfilechooser.managers.NoobManager;
 import com.noob.noobfilechooser.managers.NoobPrefsManager;
@@ -28,6 +29,7 @@ public class NoobDrawerFragment extends BaseFragment {
     private NoobDrawerAdapter mNoobDrawerAdapter;
 
     private OnRecyclerViewItemClick<NoobStorage> mStorageItemClickListener;
+    private NoobDrawerFragmentDelegate mDelegate;
 
     public NoobDrawerFragment() {
         // Required empty public constructor
@@ -36,6 +38,8 @@ public class NoobDrawerFragment extends BaseFragment {
     @Override
     protected void onSetupView(View rootView) {
         initializeRecyclerView();
+        if (mDelegate != null)
+            mDelegate.onDrawerViewLoaded();
     }
 
     void initializeRecyclerView() {
@@ -69,5 +73,9 @@ public class NoobDrawerFragment extends BaseFragment {
 
     public void setStorageItemClickListener(OnRecyclerViewItemClick<NoobStorage> storageItemClickListenerParam) {
         mStorageItemClickListener = storageItemClickListenerParam;
+    }
+
+    public void setDelegate(NoobDrawerFragmentDelegate delegateParam) {
+        mDelegate = delegateParam;
     }
 }
