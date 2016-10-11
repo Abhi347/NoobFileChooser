@@ -1,4 +1,4 @@
-[![](https://jitpack.io/v/Abhi347/NoobFileChooser.svg)](https://jitpack.io/#Abhi347/NoobFileChooser)
+[![](https://jitpack.io/v/Abhi347/NoobFileChooser.svg)](https://jitpack.io/#Abhi347/NoobFileChooser) [![Build Status](https://travis-ci.org/Abhi347/NoobFileChooser.svg?branch=master)](https://travis-ci.org/Abhi347/NoobFileChooser)
 
 # NoobFileChooser - SAF ready file chooser for Android
 A complete File manager for Android with complete support of Storage Access Framework. Now you won't need to rely on Android's stock system UI to deliver files from the External SD Card. 
