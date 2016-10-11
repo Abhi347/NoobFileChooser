@@ -57,7 +57,7 @@ public class NoobFileActivity extends AppCompatActivity implements NoobFileFragm
 
         setupFragments();
 
-        //setSupportActionBar(mToolbar);
+        setSupportActionBar(mToolbar);
 
         NoobPrefsManager.getInstance().init(this);
         if (checkPermissions()) {
