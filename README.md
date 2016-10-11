@@ -27,7 +27,7 @@ Step 1. Add the JitPack repository to your build file. Add it in your root build
 Step 2. Add the dependency
 
     dependencies {
-	        compile 'com.github.Abhi347:NoobFileChooser:0.2.0'
+	        compile 'com.github.Abhi347:NoobFileChooser:0.3.0'
 	  }
 
 ## Usage
@@ -61,6 +61,15 @@ If you want to customize the User Interface, you can use `NoobConfig` class. Jus
               .setFileGridLayoutItemResource(R.layout.item_noob_file_item) //Use your own Layout Resource for each File Item. Please check item_noob_file_item.xml for ids
               .setFileGridLayoutResource(R.layout.fragment_noob_file) //Use your own Layout Resource for the complete file fragment. Please check fragment_noob_file.xml for ids.
     NoobManager.getInstance().setConfig(noobConfig);
+
+## Changelog (0.3.0)
+ * Added Support for Internal Storage
+ * Added Support for using File class in NoobFile Wrapper
+ * Revamped UI (Still need few tweaks)
+ * Auto Display content of SD Card, if permission is already granted
+ * Auto Load of Internal Storage if SD Card is not found or permission is not given to SD Card
+ * Added ButterKnife for Binding Views
+ * Bug fixes
 
 ## Contributions
 Feel free to report bugs, feedback or even suggest new features. I'd love to make it a great library.
