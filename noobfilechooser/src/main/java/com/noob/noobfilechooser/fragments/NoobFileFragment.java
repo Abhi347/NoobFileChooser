@@ -208,9 +208,9 @@ public class NoobFileFragment extends BaseFragment {
         }
         NoobFile _currentFile = NoobManager.getInstance().getCurrentFile();
         if (_currentFile != null) {
-            DocumentFile _parentFile = _currentFile.getParent();
+            NoobFile _parentFile = _currentFile.getParentNoobFile();
             if (_parentFile != null) {
-                loadCurrentFile(new NoobFile(_parentFile));
+                loadCurrentFile(_parentFile);
                 return true;
             }
         }
