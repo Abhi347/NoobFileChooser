@@ -1,24 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_noob_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.noob.noobfilechooser.NoobFileActivity">
-
-    <FrameLayout
-        android:id="@+id/frag_container"
+    android:orientation="vertical">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-    </FrameLayout>
-    <FrameLayout
-        android:id="@+id/nav_container"
-        android:layout_width="240dp"
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:onClick="onStorageDrawerMenuClick"
+                android:paddingRight="10dp"
+                android:src="@drawable/ic_menu"
+            />
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:textAppearance="@android:style/TextAppearance.Holo.Widget.ActionBar.Title"
+                android:textColor="#fff"/>
+            <ImageButton
+                android:id="@+id/button_selection_done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:padding="5dp"
+                android:src="@drawable/ic_correct"/>
+            <ImageButton
+                android:id="@+id/button_selection_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:padding="5dp"
+                android:src="@drawable/ic_cancel"/>
+
+        </LinearLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v4.widget.DrawerLayout
+
+        android:id="@+id/drawer_noob_activity"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="start">
+        tools:context="com.noob.noobfilechooser.NoobFileActivity">
 
-    </FrameLayout>
+        <FrameLayout
+            android:id="@+id/frag_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-</android.support.v4.widget.DrawerLayout>
+        </FrameLayout>
+        <FrameLayout
+            android:id="@+id/nav_container"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start">
+
+        </FrameLayout>
+
+    </android.support.v4.widget.DrawerLayout>
+</LinearLayout>

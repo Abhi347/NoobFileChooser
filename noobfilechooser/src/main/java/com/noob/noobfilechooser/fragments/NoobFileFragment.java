@@ -6,9 +6,8 @@ import android.graphics.Color;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
+import com.noob.noobfilechooser.NoobFileActivity;
 import com.noob.noobfilechooser.R;
 import com.noob.noobfilechooser.R2;
 import com.noob.noobfilechooser.adapters.NoobFileAdapter;
@@ -35,21 +34,13 @@ public class NoobFileFragment extends BaseFragment {
     @BindView(R2.id.noob_file_recycler_view)
     RecyclerView mFileRecyclerView;
 
-    @BindView(R2.id.noob_folder_title_text)
-    TextView mTitleTextView;
-
-    @BindView(R2.id.button_selection_done)
-    ImageButton mSelectionDoneButton;
-
-    @BindView(R2.id.button_selection_cancel)
-    ImageButton mSelectionCancelButton;
-
     private NoobFileAdapter mNoobFileAdapter;
 
     private boolean mMultiSelectionMode = false;
 
     private List<NoobFile> mSelectionFiles = new ArrayList<>();
     private List<View> mSelectionViews = new ArrayList<>();
+    private NoobFileActivity mDelegate;
 
     public NoobFileFragment() {
         // Required empty public constructor
@@ -116,7 +107,7 @@ public class NoobFileFragment extends BaseFragment {
                 selectFile(model, view);
             }
         });
-        mSelectionCancelButton.setOnClickListener(new View.OnClickListener() {
+        /*mSelectionCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View viewParam) {
                 turnOnMultiSelectMode(false);
@@ -130,7 +121,7 @@ public class NoobFileFragment extends BaseFragment {
                     getActivity().finish();
                 }
             }
-        });
+        });*/
         load(null, false);
     }
 
@@ -146,9 +137,9 @@ public class NoobFileFragment extends BaseFragment {
     public void buildAndLoad(Activity activity, NoobStorage storage) {
         try {
             NoobFile _file;
-            if(storage.getUri()!=null) {
+            if (storage.getUri() != null) {
                 _file = NoobSAFManager.buildTreeFile(activity, storage.getUri());
-            }else{
+            } else {
                 File _legacyFile = new File(storage.getAbsolutePath());
                 _file = new NoobFile(_legacyFile);
             }
@@ -173,11 +164,9 @@ public class NoobFileFragment extends BaseFragment {
         }
     }
 
-    void turnOnMultiSelectMode(boolean flag) {
+    public void turnOnMultiSelectMode(boolean flag) {
         if (flag) {
             mMultiSelectionMode = true;
-            mSelectionDoneButton.setVisibility(View.VISIBLE);
-            mSelectionCancelButton.setVisibility(View.VISIBLE);
         } else {
             mMultiSelectionMode = false;
             for (View view : mSelectionViews) {
@@ -185,15 +174,19 @@ public class NoobFileFragment extends BaseFragment {
             }
             mSelectionFiles.clear();
             mSelectionViews.clear();
-            mSelectionDoneButton.setVisibility(View.GONE);
-            mSelectionCancelButton.setVisibility(View.GONE);
+        }
+        if (mDelegate != null) {
+            mDelegate.onSelectionModeChanged(mMultiSelectionMode);
         }
     }
 
     void loadCurrentFile(NoobFile fileParam) {
         NoobManager.getInstance().setCurrentFile(fileParam);
-        if (mTitleTextView != null)
-            mTitleTextView.setText(fileParam.getName());
+        /*if (mTitleTextView != null)
+            mTitleTextView.setText(fileParam.getName());*/
+        if (mDelegate != null && fileParam.isDirectory()) {
+            mDelegate.onLoadFolder(fileParam);
+        }
         /*if (parentParam.isTreeDoc())
             mNoobFileAdapter.setItems(parentParam, NoobSAFManager.buildChildFiles(getActivity(), parentParam.getUri()));
         else*/
@@ -217,5 +210,13 @@ public class NoobFileFragment extends BaseFragment {
             }
         }
         return false;
+    }
+
+    public void setDelegate(NoobFileActivity delegateParam) {
+        mDelegate = delegateParam;
+    }
+
+    public List<NoobFile> getSelectionFiles() {
+        return mSelectionFiles;
     }
 }
