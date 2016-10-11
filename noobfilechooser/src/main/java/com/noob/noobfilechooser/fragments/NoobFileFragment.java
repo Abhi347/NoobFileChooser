@@ -3,7 +3,6 @@ package com.noob.noobfilechooser.fragments;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.support.v4.provider.DocumentFile;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -19,6 +18,7 @@ import com.noob.noobfilechooser.managers.NoobSAFManager;
 import com.noob.noobfilechooser.models.NoobFile;
 import com.noob.noobfilechooser.models.NoobStorage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -145,7 +145,13 @@ public class NoobFileFragment extends BaseFragment {
 
     public void buildAndLoad(Activity activity, NoobStorage storage) {
         try {
-            NoobFile _file = NoobSAFManager.buildTreeFile(activity, storage.getUri());
+            NoobFile _file;
+            if(storage.getUri()!=null) {
+                _file = NoobSAFManager.buildTreeFile(activity, storage.getUri());
+            }else{
+                File _legacyFile = new File(storage.getAbsolutePath());
+                _file = new NoobFile(_legacyFile);
+            }
             loadCurrentFile(_file);
         } catch (SecurityException ex) {
             ex.printStackTrace();
@@ -192,11 +198,7 @@ public class NoobFileFragment extends BaseFragment {
             mNoobFileAdapter.setItems(parentParam, NoobSAFManager.buildChildFiles(getActivity(), parentParam.getUri()));
         else*/
         if (mNoobFileAdapter != null && fileParam.isDirectory()) {
-            DocumentFile[] _children = fileParam.getDocumentFile().listFiles();
-            List<NoobFile> noobChildFiles = new ArrayList<>();
-            for (DocumentFile docFile : _children) {
-                noobChildFiles.add(new NoobFile(docFile));
-            }
+            List<NoobFile> noobChildFiles = fileParam.getChildren();
             mNoobFileAdapter.setItems(fileParam, noobChildFiles);
         }
     }

@@ -48,7 +48,7 @@ public class NoobSAFManager {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static boolean checkIfSDCardRoot(Uri uri) {
-        return isExternalStorageDocument(uri) && isRootUri(uri);
+        return isExternalStorageDocument(uri) && isRootUri(uri) && !isInternalStorage(uri);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -71,7 +71,7 @@ public class NoobSAFManager {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static boolean addUriToStorage(Uri uri, Activity activity) {
         if (uri != null) {
-            if (isRootUri(uri)) {
+            if (checkIfSDCardRoot(uri)) {
                 String title = getNameFromUri(uri, activity);
                 //NoobPrefsManager.getInstance().setSDCardUri(data.getData());
                 NoobStorage _storage = new NoobStorage(uri, title);
@@ -86,10 +86,18 @@ public class NoobSAFManager {
     public static String getNameFromUri(Uri uri, Context context) {
         String title = null;
         if (isRootUri(uri)) {
+            DocumentFile documentFile = DocumentFile.fromTreeUri(context, uri);
             if (isInternalStorage(uri))
-                title = "Internal Storage";
-            else
+                if (NoobManager.getInstance().getConfig().isShouldShowStorageName()) {
+                    title = "Internal Storage ( " + documentFile.getName() + " )";
+                } else {
+                    title = "Internal Storage";
+                }
+            else if (NoobManager.getInstance().getConfig().isShouldShowStorageName()) {
+                title = "SD Card ( " + documentFile.getName() + " )";
+            } else {
                 title = "SD Card";
+            }
         } else {
             DocumentFile documentFile = DocumentFile.fromSingleUri(context, uri);
             return documentFile.getName();
@@ -104,6 +112,8 @@ public class NoobSAFManager {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static NoobFile buildTreeFile(Activity activity, Uri uri) throws SecurityException {
+        if (uri == null)
+            return null;
         ContentResolver contentResolver = activity.getContentResolver();
         Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri,
                 DocumentsContract.getTreeDocumentId(uri));
@@ -149,5 +159,16 @@ public class NoobSAFManager {
 
     public static boolean isExternalStorageDocument(Uri uri) {
         return "com.android.externalstorage.documents".equals(uri.getAuthority());
+    }
+
+    public static String getValidName(DocumentFile file, boolean isRoot) {
+        if (isRoot)
+            if (NoobManager.getInstance().getConfig().isShouldShowStorageName()) {
+                return "SD Card ( " + file.getName() + " )";
+            } else {
+                return "SD Card";
+            }
+        else
+            return file.getName();
     }
 }

@@ -1,6 +1,9 @@
 package com.noob.noobfilechooser.models;
 
 import android.net.Uri;
+import android.os.Environment;
+
+import com.noob.noobfilechooser.managers.NoobFileManager;
 
 import java.io.File;
 
@@ -32,7 +35,9 @@ public class NoobStorage {
 
     @Override
     public String toString() {
-        return getUriString();
+        if (getUriString() != null)
+            return getUriString();
+        return getAbsolutePath();
     }
 
     public void load(Uri uri, String title) {
@@ -46,13 +51,15 @@ public class NoobStorage {
     }
 
     public void load(File file) {
-        mTitle = file.getName();
+        String internalStoragePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        mTitle = NoobFileManager.getValidName(file, file.getAbsolutePath().equalsIgnoreCase(internalStoragePath));
         mAbsolutePath = file.getAbsolutePath();
     }
 
     public void load(NoobStorage storage) {
         mTitle = storage.getTitle();
         mUri = storage.getUri();
+        mAbsolutePath = storage.getAbsolutePath();
     }
 
     public String getTitle() {

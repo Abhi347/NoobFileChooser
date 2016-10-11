@@ -28,15 +28,27 @@ public class NoobFileManager {
         return type;
     }
 
-    public static Bitmap getThumbnail(File fileParam,int width, int height ){
+    public static Bitmap getThumbnail(File fileParam, int width, int height) {
         return ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(fileParam.getPath()), width, height);
     }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static Bitmap getThumbnail(DocumentFile documentFileParam, Context contextParam, int width, int height ){
+    public static Bitmap getThumbnail(DocumentFile documentFileParam, Context contextParam, int width, int height) {
         return DocumentsContract.getDocumentThumbnail(contextParam.getContentResolver(),
                 documentFileParam.getUri(),
                 new Point(width, height),
                 new CancellationSignal()
         );
+    }
+
+    public static String getValidName(File file, boolean isRoot) {
+        if (isRoot)
+            if (NoobManager.getInstance().getConfig().isShouldShowStorageName()) {
+                return "Internal Storage ( " + file.getName() + " )";
+            } else {
+                return "Internal Storage";
+            }
+        else
+            return file.getName();
     }
 }

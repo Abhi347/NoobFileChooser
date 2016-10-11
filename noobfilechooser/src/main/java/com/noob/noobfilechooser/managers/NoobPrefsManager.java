@@ -3,8 +3,8 @@ package com.noob.noobfilechooser.managers;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.support.annotation.RequiresApi;
 
 import com.google.gson.GsonBuilder;
@@ -64,9 +64,12 @@ public class NoobPrefsManager {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void loadInternalStorage() {
-        String internalStorageStr = "content://com.android.externalstorage.documents/tree/primary%3A";
+        //This method gives Security Exception. So it's better to go with the legacy approach using File
+        /*String internalStorageStr = "content://com.android.externalstorage.documents/tree/primary%3A";
         Uri uri = Uri.parse(internalStorageStr);
-        NoobSAFManager.addUriToStorage(uri, mContext);
+        NoobSAFManager.addUriToStorage(uri, mContext);*/
+        NoobStorage _storage = new NoobStorage(Environment.getExternalStorageDirectory());
+        addStorage(_storage);
     }
 
     public void saveStorage() {

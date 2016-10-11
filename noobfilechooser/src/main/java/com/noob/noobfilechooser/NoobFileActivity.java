@@ -1,10 +1,12 @@
 package com.noob.noobfilechooser;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 
 import com.noob.noobfilechooser.fragments.NoobDrawerFragment;
@@ -50,10 +52,12 @@ public class NoobFileActivity extends AppCompatActivity {
                 .replace(R.id.nav_container, getNoobDrawerFragment())
                 .commitAllowingStateLoss();
         getNoobDrawerFragment().setStorageItemClickListener(new OnRecyclerViewItemClick<NoobStorage>() {
+            @SuppressLint("RtlHardcoded")
             @Override
             public void onClick(NoobStorage model, View view) {
                 if (model != null)
                     getNoobFileFragment().load(model, true);
+                mDrawerLayout.closeDrawer(Gravity.LEFT);
             }
 
             @Override

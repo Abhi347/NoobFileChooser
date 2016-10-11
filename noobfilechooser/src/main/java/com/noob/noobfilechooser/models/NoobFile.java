@@ -10,13 +10,15 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.support.annotation.RequiresApi;
 import android.support.v4.provider.DocumentFile;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.noob.noobfilechooser.managers.NoobFileManager;
 import com.noob.noobfilechooser.managers.NoobManager;
+import com.noob.noobfilechooser.managers.NoobSAFManager;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by abhi on 27/09/16.
@@ -39,7 +41,7 @@ public class NoobFile {
     public NoobFile(Context contextParam, Cursor cursorParam, Uri treeUri, boolean isTreeDocParam) {
         isTreeDoc = isTreeDocParam;
 
-        mName = cursorParam.getString(0);
+        //mName = cursorParam.getString(0);
         mMimeType = cursorParam.getString(1);
         mDocId = cursorParam.getString(2);
         isDirectory = mMimeType.equalsIgnoreCase(DocumentsContract.Document.MIME_TYPE_DIR);
@@ -56,11 +58,12 @@ public class NoobFile {
             }
         }
 
-        if (mDocumentFile.exists()) {
+        /*if (mDocumentFile.exists()) {
             Log.d("DocumentENtry", "Exists true " + mName);
         } else {
             Log.d("DocumentENtry", "Exists false " + mName);
-        }
+        }*/
+        mName = NoobSAFManager.getValidName(mDocumentFile, isTreeDoc());
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -78,7 +81,7 @@ public class NoobFile {
         mDocumentFile = docFileParam;
         isDirectory = mDocumentFile.isDirectory();
         mUri = docFileParam.getUri();
-        mName = docFileParam.getName();
+        mName = NoobSAFManager.getValidName(mDocumentFile, isTreeDoc());
         mMimeType = docFileParam.getType();
         mDocId = DocumentsContract.getDocumentId(mUri);
     }
@@ -88,8 +91,24 @@ public class NoobFile {
         isTreeDoc = fileParam.getAbsolutePath().equalsIgnoreCase(internalStoragePath);
         mFile = fileParam;
         isDirectory = mFile.isDirectory();
-        mName = mFile.getName();
+        mName = NoobFileManager.getValidName(mFile, isTreeDoc());
         mMimeType = NoobFileManager.getMimeType(mFile.getPath());
+    }
+
+    public List<NoobFile> getChildren() {
+        List<NoobFile> children = new ArrayList<>();
+        if (getDocumentFile() != null) {
+            DocumentFile[] _files = getDocumentFile().listFiles();
+            for (DocumentFile docFile : _files) {
+                children.add(new NoobFile(docFile));
+            }
+        } else if (getFile() != null) {
+            File[] _files = getFile().listFiles();
+            for (File file : _files) {
+                children.add(new NoobFile(file));
+            }
+        }
+        return children;
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -99,7 +118,7 @@ public class NoobFile {
     }
 
     private Bitmap loadThumbnail() {
-        mThumbnail = NoobFileManager.getThumbnail(mFile, 60, 60);
+        mThumbnail = NoobFileManager.getThumbnail(mFile, 100, 100);
         return mThumbnail;
     }
 

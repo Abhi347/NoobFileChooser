@@ -15,6 +15,8 @@ public class NoobConfig {
     private int fileGridLayoutItemResource;
     private int storageListLayoutItemResource;
     private int fileGridLayoutResource;
+    private boolean shouldShowStorageName;
+    private boolean forceSDCardAddition;
 
     public NoobConfig() {
         folderDrawableResource = R.drawable.ic_folder;
@@ -25,6 +27,8 @@ public class NoobConfig {
         fileGridLayoutItemResource = R.layout.item_noob_file_item;
         fileGridLayoutResource = R.layout.fragment_noob_file;
         storageListLayoutItemResource = R.layout.item_noob_storage_list;
+        shouldShowStorageName = false;
+        forceSDCardAddition = false;
     }
 
     //region Accessors
@@ -99,6 +103,22 @@ public class NoobConfig {
     public NoobConfig setStorageListLayoutItemResource(int storageListLayoutItemResourceParam) {
         storageListLayoutItemResource = storageListLayoutItemResourceParam;
         return this;
+    }
+
+    public boolean isShouldShowStorageName() {
+        return shouldShowStorageName;
+    }
+
+    public void setShouldShowStorageName(boolean shouldShowStorageNameParam) {
+        shouldShowStorageName = shouldShowStorageNameParam;
+    }
+
+    public boolean isForceSDCardAddition() {
+        return forceSDCardAddition;
+    }
+
+    public void setForceSDCardAddition(boolean forceSDCardAdditionParam) {
+        forceSDCardAddition = forceSDCardAdditionParam;
     }
     //endregion
 }
