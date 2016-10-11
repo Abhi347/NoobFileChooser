@@ -25,4 +25,8 @@ public class NoobDrawerFragment extends BaseFragment{
     protected int getLayout() {
         return R.layout.fragment_noob_drawer;
     }
+
+    public static NoobDrawerFragment newInstance() {
+        return new NoobDrawerFragment();
+    }
 }

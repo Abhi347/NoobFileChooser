@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 
+import com.noob.noobfilechooser.fragments.NoobDrawerFragment;
 import com.noob.noobfilechooser.fragments.NoobFileFragment;
 import com.noob.noobfilechooser.managers.NoobPermissionManager;
 import com.noob.noobfilechooser.managers.NoobPrefsManager;
@@ -21,6 +22,7 @@ public class NoobFileActivity extends AppCompatActivity {
     DrawerLayout mDrawerLayout;
 
     NoobFileFragment mNoobFileFragment;
+    NoobDrawerFragment mNoobDrawerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +45,7 @@ public class NoobFileActivity extends AppCompatActivity {
                 .commitAllowingStateLoss();
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.nav_container, getNoobFileFragment())
+                .replace(R.id.nav_container, getNoobDrawerFragment())
                 .commitAllowingStateLoss();
     }
 
@@ -110,5 +112,15 @@ public class NoobFileActivity extends AppCompatActivity {
         if (noobFileFragment != null) {
             mNoobFileFragment = noobFileFragment;
         }
+    }
+
+    protected NoobDrawerFragment getNoobDrawerFragment() {
+        if(mNoobDrawerFragment == null)
+            setNoobDrawerFragment(NoobDrawerFragment.newInstance());
+        return mNoobDrawerFragment;
+    }
+
+    protected void setNoobDrawerFragment(NoobDrawerFragment noobDrawerFragmentParam) {
+        mNoobDrawerFragment = noobDrawerFragmentParam;
     }
 }

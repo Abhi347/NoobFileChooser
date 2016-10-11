@@ -3,7 +3,6 @@ package com.noob.noobfilechooser.fragments;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.support.v4.app.Fragment;
 import android.support.v4.provider.DocumentFile;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,7 +26,7 @@ import butterknife.BindView;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link BaseFragment} subclass.
  * Use the {@link NoobFileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
@@ -37,7 +36,7 @@ public class NoobFileFragment extends BaseFragment {
     RecyclerView mFileRecyclerView;
 
     @BindView(R2.id.noob_folder_title_text)
-    private TextView mTitleTextView;
+    TextView mTitleTextView;
 
     @BindView(R2.id.button_selection_done)
     ImageButton mSelectionDoneButton;
@@ -45,13 +44,12 @@ public class NoobFileFragment extends BaseFragment {
     @BindView(R2.id.button_selection_cancel)
     ImageButton mSelectionCancelButton;
 
-    private GridLayoutManager mLayoutManager;
-    NoobFileAdapter mNoobFileAdapter;
+    private NoobFileAdapter mNoobFileAdapter;
 
-    boolean mMultiSelectionMode = false;
+    private boolean mMultiSelectionMode = false;
 
-    List<NoobFile> mSelectionFiles = new ArrayList<>();
-    List<View> mSelectionViews = new ArrayList<>();
+    private List<NoobFile> mSelectionFiles = new ArrayList<>();
+    private List<View> mSelectionViews = new ArrayList<>();
 
     public NoobFileFragment() {
         // Required empty public constructor
@@ -82,10 +80,12 @@ public class NoobFileFragment extends BaseFragment {
     }
 
     void initializeRecyclerView() {
+
         turnOnMultiSelectMode(false);
+
         mFileRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new GridLayoutManager(getActivity(), getColumnCount());
-        mFileRecyclerView.setLayoutManager(mLayoutManager);
+        GridLayoutManager _layoutManager = new GridLayoutManager(getActivity(), getColumnCount());
+        mFileRecyclerView.setLayoutManager(_layoutManager);
 
         // specify an adapter (see also next example)
         mNoobFileAdapter = new NoobFileAdapter(NoobManager.getInstance().getConfig().getFileGridLayoutItemResource());
@@ -162,7 +162,7 @@ public class NoobFileFragment extends BaseFragment {
         }
     }
 
-    void turnOnMultiSelectMode(boolean flag) {
+    void turnOnMultiSelectMode(boolean flag){
         if (flag) {
             mMultiSelectionMode = true;
             mSelectionDoneButton.setVisibility(View.VISIBLE);
@@ -186,7 +186,7 @@ public class NoobFileFragment extends BaseFragment {
         /*if (parentParam.isTreeDoc())
             mNoobFileAdapter.setItems(parentParam, NoobSAFManager.buildChildFiles(getActivity(), parentParam.getUri()));
         else*/
-        if (mNoobFileAdapter!=null && fileParam.isDirectory()) {
+        if (mNoobFileAdapter != null && fileParam.isDirectory()) {
             DocumentFile[] _children = fileParam.getDocumentFile().listFiles();
             List<NoobFile> noobChildFiles = new ArrayList<>();
             for (DocumentFile docFile : _children) {
