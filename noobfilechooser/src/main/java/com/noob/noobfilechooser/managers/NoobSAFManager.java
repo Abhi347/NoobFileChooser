@@ -59,11 +59,9 @@ public class NoobSAFManager {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static boolean onActivityResult(Activity activity, int requestCode, Intent data) {
-        if (requestCode == ADD_STORAGE_REQUEST_CODE) {
-            if (data != null && data.getData() != null) {
-                Uri uri = data.getData();
-                return addUriToStorage(uri, activity);
-            }
+        if (requestCode == ADD_STORAGE_REQUEST_CODE && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+            return addUriToStorage(uri, activity);
         }
         return false;
     }
