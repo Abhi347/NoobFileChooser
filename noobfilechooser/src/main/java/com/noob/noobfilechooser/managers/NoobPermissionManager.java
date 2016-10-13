@@ -20,7 +20,7 @@ public class NoobPermissionManager {
         return takePermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE, "Writing to External Storage is required for the App to work properly.", true);
     }
 
-    private static boolean takePermission(final Activity activity, final String permission, String rationaleMessage, boolean shouldShowDialog) {
+    private static boolean takePermission(final Activity activity, final String permission, final String rationaleMessage, final boolean shouldShowDialog) {
         if (checkPermission(activity, permission))
             return true;
         boolean shouldRequestPermission = true;
@@ -36,7 +36,24 @@ public class NoobPermissionManager {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterfaceParam, int iParam) {
-                            //TODO: Show an Error Message
+                            new AlertDialog.Builder(activity)
+                                    .setTitle("Permission Denied")
+                                    .setMessage("The permissions are required to let this application work correctly.")
+                                    .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterfaceParam, int iParam) {
+                                            takePermission(activity, permission, rationaleMessage, shouldShowDialog);
+                                        }
+                                    })
+                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterfaceParam, int iParam) {
+                                            dialogInterfaceParam.dismiss();
+                                            activity.finish();
+                                        }
+                                    })
+                                    .create()
+                                    .show();
                         }
                     });
             shouldRequestPermission = false;
